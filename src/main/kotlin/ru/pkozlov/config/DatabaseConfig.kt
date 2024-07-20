@@ -1,4 +1,4 @@
-package ru.pkozlov.common.config
+package ru.pkozlov.config
 
 import kotlinx.serialization.Serializable
 

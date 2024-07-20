@@ -4,10 +4,11 @@ import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import io.ktor.server.application.*
 import org.jetbrains.exposed.sql.Database
-import ru.pkozlov.common.config.DatabaseConfig
+import org.koin.ktor.ext.inject
+import ru.pkozlov.config.DatabaseConfig
 
 fun Application.configureDatabases() {
-    val config: DatabaseConfig
+    val config: DatabaseConfig by inject<DatabaseConfig>()
 
     HikariConfig()
         .apply {

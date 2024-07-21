@@ -27,7 +27,7 @@ class CompetitionRepositoryImpl : CompetitionRepository {
                 endDate = competition.endDate
                 address = competition.address
                 imagePath = competition.imagePath
-                categoryes = competition.categoryes
+                categories = competition.categories
                 deleted = false
                 createdAt = LocalDateTime.now()
                 updatedAt = LocalDateTime.now()
@@ -42,7 +42,7 @@ class CompetitionRepositoryImpl : CompetitionRepository {
                 competition.endDate = updatedCompetition.endDate
                 competition.address = updatedCompetition.address
                 competition.imagePath = updatedCompetition.imagePath
-                competition.categoryes = updatedCompetition.categoryes
+                competition.categories = updatedCompetition.categories
                 competition.updatedAt = LocalDateTime.now()
             }?.asDto()
         }

@@ -18,5 +18,5 @@ data class CompetitionDto(
     val endDate: LocalDate,
     val address: String,
     val imagePath: String,
-    val categoryes: List<Category>
+    val categories: List<Category>
 )

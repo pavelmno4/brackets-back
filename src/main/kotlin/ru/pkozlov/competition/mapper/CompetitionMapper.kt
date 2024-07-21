@@ -11,5 +11,5 @@ fun Competition.asDto(): CompetitionDto =
         endDate = endDate,
         address = address,
         imagePath = imagePath,
-        categoryes = categoryes
+        categories = categories
     )

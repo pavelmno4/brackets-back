@@ -34,7 +34,7 @@ class Competition(id: EntityID<UUID>) : UUIDEntity(id) {
     var endDate: LocalDate by CompetitionTable.endDate
     var address: String by CompetitionTable.address
     var imagePath: String by CompetitionTable.imagePath
-    var categoryes: List<Category> by CompetitionTable.categories
+    var categories: List<Category> by CompetitionTable.categories
     var deleted: Boolean by CompetitionTable.deleted
     var createdAt: LocalDateTime by CompetitionTable.createdAt
     var updatedAt: LocalDateTime by CompetitionTable.updatedAt

@@ -4,6 +4,7 @@ val koin_version: String by project
 val exposed_version: String by project
 val postgres_version: String by project
 val hikari_version: String by project
+val flyway_version: String by project
 val logback_version: String by project
 
 plugins {
@@ -50,6 +51,7 @@ dependencies {
     implementation("org.jetbrains.exposed:exposed-jdbc:$exposed_version")
     implementation("org.jetbrains.exposed:exposed-java-time:$exposed_version")
     implementation("org.jetbrains.exposed:exposed-json:$exposed_version")
+    implementation("org.flywaydb:flyway-database-postgresql:$flyway_version")
 
     /** Logging */
     implementation("ch.qos.logback:logback-classic:$logback_version")

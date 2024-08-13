@@ -7,7 +7,7 @@ import org.jetbrains.exposed.sql.Database
 import org.koin.ktor.ext.inject
 import ru.pkozlov.config.DatabaseConfig
 
-fun Application.configureDatabases() {
+fun Application.configureDatabase() {
     val config: DatabaseConfig by inject<DatabaseConfig>()
 
     HikariConfig()

@@ -1,5 +1,6 @@
 
 val kotlin_version: String by project
+val ktor_version: String by project
 val koin_version: String by project
 val exposed_version: String by project
 val postgres_version: String by project
@@ -58,6 +59,6 @@ dependencies {
 
     /** Tests */
     testImplementation("io.insert-koin:koin-test:$koin_version")
-    testImplementation("io.insert-koin:koin-test-junit4:$koin_version")
     testImplementation("io.ktor:ktor-server-tests-jvm")
+    testImplementation("io.ktor:ktor-client-content-negotiation-jvm")
 }

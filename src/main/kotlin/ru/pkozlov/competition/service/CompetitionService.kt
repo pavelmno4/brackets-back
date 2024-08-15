@@ -17,8 +17,9 @@ class CompetitionService(
     suspend fun delete(id: UUID): CompetitionDto? =
         competitionRepository.delete(id)
 
-    suspend fun findAll(): List<CompetitionDto> =
+    suspend fun findAll(showInactive: Boolean): List<CompetitionDto> =
         competitionRepository.findAll()
+            .filter { competition -> showInactive || !competition.deleted }
 
     suspend fun findById(id: UUID): CompetitionDto? =
         competitionRepository.findById(id)

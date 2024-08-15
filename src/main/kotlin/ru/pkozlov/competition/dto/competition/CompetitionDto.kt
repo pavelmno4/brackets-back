@@ -18,5 +18,6 @@ data class CompetitionDto(
     val endDate: LocalDate,
     val address: String,
     val imagePath: String,
-    val categories: List<Category>
+    val categories: List<Category>,
+    val deleted: Boolean
 )

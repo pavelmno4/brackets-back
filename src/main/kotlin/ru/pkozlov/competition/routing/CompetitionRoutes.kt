@@ -16,9 +16,9 @@ fun Application.competitionRoutes() {
     routing {
         route("/competitions") {
             get {
-                competitionService.findAll().let { competitions ->
-                    call.respond(competitions)
-                }
+                val showInactive: Boolean = call.request.queryParameters["showInactive"]?.toBoolean() ?: false
+                competitionService.findAll(showInactive)
+                    .let { competitions -> call.respond(competitions) }
             }
 
             get("/{id}") {
@@ -31,26 +31,25 @@ fun Application.competitionRoutes() {
             post {
                 val competition: PersistCompetitionDto = call.receive<PersistCompetitionDto>()
 
-                competitionService.create(competition).let { createdCompetition ->
-                    call.respond(createdCompetition)
-                }
+                competitionService.create(competition)
+                    .let { createdCompetition -> call.respond(createdCompetition) }
             }
 
             put("/{id}") {
                 val id: UUID = call.parameters["id"]?.run(UUID::fromString) ?: throw IllegalStateException()
                 val competition: PersistCompetitionDto = call.receive<PersistCompetitionDto>()
 
-                competitionService.update(id, competition)?.let { updatedCompetition ->
-                    call.respond(updatedCompetition)
-                }
+                competitionService.update(id, competition)
+                    ?.let { updatedCompetition -> call.respond(updatedCompetition) }
+                    ?: call.respond(HttpStatusCode.NoContent)
             }
 
             delete("/{id}") {
                 val id: UUID = call.parameters["id"]?.run(UUID::fromString) ?: throw IllegalStateException()
 
-                competitionService.delete(id)?.run {
-                    call.response.status(HttpStatusCode.OK)
-                }
+                competitionService.delete(id)
+                    ?.run { call.response.status(HttpStatusCode.OK) }
+                    ?: call.respond(HttpStatusCode.NoContent)
             }
         }
     }

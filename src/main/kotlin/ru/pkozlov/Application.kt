@@ -3,6 +3,7 @@ package ru.pkozlov
 import io.ktor.server.application.*
 import org.koin.ktor.plugin.Koin
 import org.koin.logger.slf4jLogger
+import ru.pkozlov.competition.di.competitionModule
 import ru.pkozlov.di.appModule
 import ru.pkozlov.plugins.configureDatabase
 import ru.pkozlov.plugins.configureDatebaseMigration
@@ -16,7 +17,7 @@ fun main(args: Array<String>) {
 fun Application.module() {
     install(Koin) {
         slf4jLogger()
-        modules(appModule)
+        modules(appModule, competitionModule)
     }
     configureSerialization()
     configureDatabase()

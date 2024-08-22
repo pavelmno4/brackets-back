@@ -7,6 +7,8 @@ import java.util.*
 
 @Serializable
 data class ParticipantDto(
+    @Serializable(with = UUIDSerializer::class)
+    val id: UUID,
     val name: String,
     val birthYear: Int,
     val gender: Gender,

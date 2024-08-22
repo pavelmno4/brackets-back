@@ -5,7 +5,7 @@ import ru.pkozlov.brackets.participant.domain.ParticipantTable
 import ru.pkozlov.brackets.participant.dto.ParticipantDto
 import ru.pkozlov.brackets.participant.dto.PersistParticipantDto
 import ru.pkozlov.brackets.participant.mapper.asDto
-import ru.pkozlov.brackets.utils.suspendTransaction
+import ru.pkozlov.brackets.app.utils.suspendTransaction
 import java.util.*
 
 class ParticipantRepositoryImpl : ParticipantRepository {

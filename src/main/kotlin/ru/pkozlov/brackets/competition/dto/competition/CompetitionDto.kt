@@ -2,8 +2,8 @@ package ru.pkozlov.brackets.competition.dto.competition
 
 import kotlinx.serialization.Serializable
 import ru.pkozlov.brackets.competition.dto.category.Category
-import ru.pkozlov.brackets.utils.serializer.LocalDateSerializer
-import ru.pkozlov.brackets.utils.serializer.UUIDSerializer
+import ru.pkozlov.brackets.app.utils.serializer.LocalDateSerializer
+import ru.pkozlov.brackets.app.utils.serializer.UUIDSerializer
 import java.time.LocalDate
 import java.util.*
 

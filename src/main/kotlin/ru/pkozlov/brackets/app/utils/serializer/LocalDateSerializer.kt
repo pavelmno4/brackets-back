@@ -1,4 +1,4 @@
-package ru.pkozlov.brackets.utils.serializer
+package ru.pkozlov.brackets.app.utils.serializer
 
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.descriptors.PrimitiveKind

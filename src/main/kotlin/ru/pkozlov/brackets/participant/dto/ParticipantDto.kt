@@ -2,7 +2,7 @@ package ru.pkozlov.brackets.participant.dto
 
 import kotlinx.serialization.Serializable
 import ru.pkozlov.brackets.participant.enumeration.Gender
-import ru.pkozlov.brackets.utils.serializer.UUIDSerializer
+import ru.pkozlov.brackets.app.utils.serializer.UUIDSerializer
 import java.util.*
 
 @Serializable

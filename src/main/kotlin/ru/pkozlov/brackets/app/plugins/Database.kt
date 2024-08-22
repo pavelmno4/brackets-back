@@ -1,11 +1,11 @@
-package ru.pkozlov.brackets.plugins
+package ru.pkozlov.brackets.app.plugins
 
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import io.ktor.server.application.*
 import org.jetbrains.exposed.sql.Database
 import org.koin.ktor.ext.inject
-import ru.pkozlov.brackets.config.DatabaseConfig
+import ru.pkozlov.brackets.app.config.DatabaseConfig
 
 fun Application.configureDatabase() {
     val config: DatabaseConfig by inject<DatabaseConfig>()

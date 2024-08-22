@@ -1,4 +1,4 @@
-package ru.pkozlov.brackets.plugins
+package ru.pkozlov.brackets.app.plugins
 
 import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.application.*

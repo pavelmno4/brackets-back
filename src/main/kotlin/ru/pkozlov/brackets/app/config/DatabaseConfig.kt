@@ -1,4 +1,4 @@
-package ru.pkozlov.brackets.config
+package ru.pkozlov.brackets.app.config
 
 import kotlinx.serialization.Serializable
 

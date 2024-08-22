@@ -4,7 +4,7 @@ import ru.pkozlov.brackets.competition.domain.Competition
 import ru.pkozlov.brackets.competition.dto.competition.CompetitionDto
 import ru.pkozlov.brackets.competition.dto.competition.PersistCompetitionDto
 import ru.pkozlov.brackets.competition.mapper.asDto
-import ru.pkozlov.brackets.utils.suspendTransaction
+import ru.pkozlov.brackets.app.utils.suspendTransaction
 import java.time.LocalDateTime
 import java.util.*
 

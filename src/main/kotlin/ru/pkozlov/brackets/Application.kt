@@ -4,11 +4,11 @@ import io.ktor.server.application.*
 import org.koin.ktor.plugin.Koin
 import org.koin.logger.slf4jLogger
 import ru.pkozlov.brackets.competition.di.competitionModule
-import ru.pkozlov.brackets.di.appModule
-import ru.pkozlov.brackets.plugins.configureDatabase
-import ru.pkozlov.brackets.plugins.configureDatebaseMigration
-import ru.pkozlov.brackets.plugins.configureRouting
-import ru.pkozlov.brackets.plugins.configureSerialization
+import ru.pkozlov.brackets.app.di.appModule
+import ru.pkozlov.brackets.app.plugins.configureDatabase
+import ru.pkozlov.brackets.app.plugins.configureDatabaseMigration
+import ru.pkozlov.brackets.app.plugins.configureRouting
+import ru.pkozlov.brackets.app.plugins.configureSerialization
 
 fun main(args: Array<String>) {
     io.ktor.server.netty.EngineMain.main(args)
@@ -21,6 +21,6 @@ fun Application.module() {
     }
     configureSerialization()
     configureDatabase()
-    configureDatebaseMigration()
+    configureDatabaseMigration()
     configureRouting()
 }

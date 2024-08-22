@@ -1,4 +1,4 @@
-package ru.pkozlov.brackets.utils
+package ru.pkozlov.brackets.app.utils
 
 import kotlinx.coroutines.Dispatchers
 import org.jetbrains.exposed.sql.Transaction

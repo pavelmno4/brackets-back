@@ -47,14 +47,6 @@ fun Application.competitionRoutes() {
                     ?.let { updatedCompetition -> call.respond(updatedCompetition) }
                     ?: call.respond(HttpStatusCode.NoContent)
             }
-
-            delete("/{id}") {
-                val id: UUID = call.parameters["id"]?.run(UUID::fromString) ?: throw IllegalStateException()
-
-                competitionService.delete(id)
-                    ?.run { call.response.status(HttpStatusCode.OK) }
-                    ?: call.respond(HttpStatusCode.NoContent)
-            }
         }
     }
 }

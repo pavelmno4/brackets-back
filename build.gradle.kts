@@ -7,6 +7,7 @@ val postgres_version: String by project
 val hikari_version: String by project
 val flyway_version: String by project
 val logback_version: String by project
+val mockk_version: String by project
 
 plugins {
     kotlin("jvm") version "2.0.0"
@@ -59,6 +60,8 @@ dependencies {
 
     /** Tests */
     testImplementation("io.insert-koin:koin-test:$koin_version")
+    testImplementation("io.insert-koin:koin-test-junit4:$koin_version")
     testImplementation("io.ktor:ktor-server-tests-jvm")
     testImplementation("io.ktor:ktor-client-content-negotiation-jvm")
+    testImplementation("io.mockk:mockk:$mockk_version")
 }

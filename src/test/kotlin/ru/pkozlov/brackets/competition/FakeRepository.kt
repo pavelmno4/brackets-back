@@ -1,13 +1,18 @@
-package ru.pkozlov.competition
+package ru.pkozlov.brackets.competition
 
-import ru.pkozlov.competition.dto.category.Category
-import ru.pkozlov.competition.dto.competition.CompetitionDto
-import ru.pkozlov.competition.dto.competition.PersistCompetitionDto
-import ru.pkozlov.competition.repository.CompetitionRepository
+import ru.pkozlov.brackets.app.dto.AgeCategory
+import ru.pkozlov.brackets.app.dto.WeightCategory
+import ru.pkozlov.brackets.competition.dto.category.Category
+import ru.pkozlov.brackets.competition.dto.competition.CompetitionDto
+import ru.pkozlov.brackets.competition.dto.competition.PersistCompetitionDto
+import ru.pkozlov.brackets.competition.repository.CompetitionRepository
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.util.*
 
-class FakeRepository : CompetitionRepository {
+class FakeRepository(
+    private val now: () -> LocalDateTime
+) : CompetitionRepository {
     private val repository: MutableMap<UUID, CompetitionDto> = mutableMapOf(
         UUID.fromString("eff81db2-e3f5-47eb-bdd8-827ed5dfb322") to CompetitionDto(
             id = UUID.fromString("eff81db2-e3f5-47eb-bdd8-827ed5dfb322"),
@@ -18,31 +23,51 @@ class FakeRepository : CompetitionRepository {
             imagePath = "/image",
             categories = listOf(
                 Category(
-                    yearRange = "2012-2011",
-                    weights = setOf("52", "54")
+                    yearRange = AgeCategory("2012-2011"),
+                    weights = setOf(WeightCategory("52"), WeightCategory("54"))
                 )
             ),
             deleted = false
         ),
-        UUID.fromString("eff81db1-e3f5-47eb-bdd8-827ed5dfb322") to CompetitionDto(
-            id = UUID.fromString("eff81db1-e3f5-47eb-bdd8-827ed5dfb322"),
+        UUID.fromString("eff81db2-e3f5-47eb-bdd8-827ed5dfb323") to CompetitionDto(
+            id = UUID.fromString("eff81db2-e3f5-47eb-bdd8-827ed5dfb322"),
             title = "Турнир номер 2",
+            startDate = LocalDate.parse("2024-09-05"),
+            endDate = LocalDate.parse("2024-09-05"),
+            address = "Московская обл., п. Большевик",
+            imagePath = "/image",
+            categories = listOf(
+                Category(
+                    yearRange = AgeCategory("2012-2011"),
+                    weights = setOf(WeightCategory("52"), WeightCategory("54"))
+                )
+            ),
+            deleted = false
+        ),
+        UUID.fromString("eff81db1-e3f5-47eb-bdd8-827ed5dfb324") to CompetitionDto(
+            id = UUID.fromString("eff81db1-e3f5-47eb-bdd8-827ed5dfb322"),
+            title = "Турнир номер 3",
             startDate = LocalDate.parse("2024-09-24"),
             endDate = LocalDate.parse("2024-09-24"),
             address = "Московская обл., п. Большевик",
             imagePath = "/image",
             categories = listOf(
                 Category(
-                    yearRange = "2012-2011",
-                    weights = setOf("52", "54")
+                    yearRange = AgeCategory("2012-2011"),
+                    weights = setOf(WeightCategory("52"), WeightCategory("54"))
                 )
             ),
             deleted = true
         )
     )
 
-    override suspend fun findAll(): List<CompetitionDto> =
-        repository.values.toList()
+    override suspend fun findUpcoming(): List<CompetitionDto> =
+        repository.values
+            .filter { it.endDate >= now().toLocalDate() && !it.deleted }
+
+    override suspend fun findPast(): List<CompetitionDto> =
+        repository.values
+            .filter { it.endDate < now().toLocalDate() && !it.deleted }
 
     override suspend fun findById(id: UUID): CompetitionDto? =
         repository[id]

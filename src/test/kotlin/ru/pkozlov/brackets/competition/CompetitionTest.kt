@@ -1,33 +1,62 @@
-package ru.pkozlov.competition
+package ru.pkozlov.brackets.competition
 
 import io.ktor.client.call.*
 import io.ktor.client.request.*
 import io.ktor.http.*
 import io.ktor.server.testing.*
+import io.mockk.every
+import io.mockk.mockkClass
+import org.junit.Rule
 import org.koin.core.context.stopKoin
-import ru.pkozlov.competition.dto.category.Category
-import ru.pkozlov.competition.dto.competition.CompetitionDto
-import ru.pkozlov.competition.dto.competition.PersistCompetitionDto
+import org.koin.dsl.module
+import org.koin.test.KoinTest
+import org.koin.test.KoinTestRule
+import org.koin.test.mock.MockProviderRule
+import org.koin.test.mock.declareMock
+import ru.pkozlov.brackets.app.dto.AgeCategory
+import ru.pkozlov.brackets.app.dto.WeightCategory
+import ru.pkozlov.brackets.competition.dto.category.Category
+import ru.pkozlov.brackets.competition.dto.competition.CompetitionDto
+import ru.pkozlov.brackets.competition.dto.competition.PersistCompetitionDto
+import ru.pkozlov.brackets.competition.repository.CompetitionRepository
+import ru.pkozlov.brackets.competition.service.CompetitionService
 import java.time.LocalDate
+import java.time.LocalDateTime
 import kotlin.test.AfterTest
 import kotlin.test.Test
 import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
 
-class CompetitionTest {
-    
+class CompetitionTest : KoinTest {
+    @Rule
+    fun koin() = KoinTestRule.create {
+        modules(
+            module {
+                single<CompetitionRepository> { FakeRepository(get()) }
+                single<CompetitionService> { CompetitionService(get()) }
+                single<() -> LocalDateTime> { { LocalDateTime.now() } }
+            }
+        )
+    }
+
+    @Rule
+    fun mockProvider() = MockProviderRule.create { clazz -> mockkClass(clazz) }
+
     @AfterTest
     fun tearDown() {
         stopKoin()
     }
 
     @Test
-    fun `find all exclute inactive`() = testApplication {
+    fun `find all upcoming`() = testApplication {
         initPlugins()
 
         val client = initClient()
 
-        val response = client.get("/competitions?showInactive=false")
+        val now = declareMock<() -> LocalDateTime>()
+        every { now() } returns LocalDateTime.parse("2024-09-15T12:15:00")
+
+        val response = client.get("/competitions/upcoming")
         val results = response.body<List<CompetitionDto>>()
 
         assertEquals(HttpStatusCode.OK, response.status)
@@ -38,17 +67,20 @@ class CompetitionTest {
     }
 
     @Test
-    fun `find all include inactive`() = testApplication {
+    fun `find all past`() = testApplication {
         initPlugins()
 
         val client = initClient()
 
-        val response = client.get("/competitions?showInactive=true")
+        val now = declareMock<() -> LocalDateTime>()
+        every { now() } returns LocalDateTime.parse("2024-09-15T12:15:00")
+
+        val response = client.get("/competitions/past")
         val results = response.body<List<CompetitionDto>>()
 
         assertEquals(HttpStatusCode.OK, response.status)
 
-        val expectedCompetitionTitles = listOf("Турнир номер 1", "Турнир номер 2")
+        val expectedCompetitionTitles = listOf("Турнир номер 2")
         val actualCompetitionTitles = results.map(CompetitionDto::title)
         assertContentEquals(expectedCompetitionTitles, actualCompetitionTitles)
     }
@@ -97,8 +129,8 @@ class CompetitionTest {
                     imagePath = "/image",
                     categories = listOf(
                         Category(
-                            yearRange = "2014-2013",
-                            weights = setOf("36", "40")
+                            yearRange = AgeCategory("2014-2013"),
+                            weights = setOf(WeightCategory("36"), WeightCategory("40"))
                         )
                     )
                 )
@@ -134,8 +166,8 @@ class CompetitionTest {
                     imagePath = "/image",
                     categories = listOf(
                         Category(
-                            yearRange = "2014-2013",
-                            weights = setOf("36", "40")
+                            yearRange = AgeCategory("2014-2013"),
+                            weights = setOf(WeightCategory("36"), WeightCategory("40"))
                         )
                     )
                 )
@@ -166,8 +198,8 @@ class CompetitionTest {
                     imagePath = "/image",
                     categories = listOf(
                         Category(
-                            yearRange = "2014-2013",
-                            weights = setOf("36", "40")
+                            yearRange = AgeCategory("2014-2013"),
+                            weights = setOf(WeightCategory("36"), WeightCategory("40"))
                         )
                     )
                 )
@@ -175,31 +207,5 @@ class CompetitionTest {
         }
 
         assertEquals(HttpStatusCode.NoContent, response.status)
-    }
-
-    @Test
-    fun `successfully delete`() = testApplication {
-        initPlugins()
-
-        val client = initClient()
-
-        val beforeDelete = client.get("/competitions/eff81db2-e3f5-47eb-bdd8-827ed5dfb322").body<CompetitionDto>()
-        
-        assertEquals(false, beforeDelete.deleted)
-        
-        val afterDeleteResponse = client.delete("/competitions/eff81db2-e3f5-47eb-bdd8-827ed5dfb322")
-
-        assertEquals(HttpStatusCode.OK, afterDeleteResponse.status)
-    }
-    
-    @Test
-    fun `competition not found on delete`() = testApplication {
-        initPlugins()
-
-        val client = initClient()
-        
-        val afterDeleteResponse = client.delete("/competitions/eff81db2-e3f5-47eb-bdd8-827ed5dfb324")
-
-        assertEquals(HttpStatusCode.NoContent, afterDeleteResponse.status)
     }
 }

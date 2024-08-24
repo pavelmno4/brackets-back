@@ -8,9 +8,9 @@ import java.time.LocalDate
 @Serializable
 data class PersistCompetitionDto(
     val title: String,
-    @Serializable(with = LocalDateSerializer::class)
+    @Serializable(LocalDateSerializer::class)
     val startDate: LocalDate,
-    @Serializable(with = LocalDateSerializer::class)
+    @Serializable(LocalDateSerializer::class)
     val endDate: LocalDate,
     val address: String,
     val imagePath: String,

@@ -5,6 +5,8 @@ import org.jetbrains.exposed.dao.UUIDEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.UUIDTable
 import org.jetbrains.exposed.sql.Column
+import ru.pkozlov.brackets.app.dto.AgeCategory
+import ru.pkozlov.brackets.app.dto.WeightCategory
 import ru.pkozlov.brackets.competition.domain.Competition
 import ru.pkozlov.brackets.competition.domain.CompetitionTable
 import ru.pkozlov.brackets.participant.enumeration.Gender
@@ -30,7 +32,7 @@ class Participant(id: EntityID<UUID>) : UUIDEntity(id) {
     var name: String by ParticipantTable.name
     var birthYear: Int by ParticipantTable.birthYear
     var gender: Gender by ParticipantTable.gender
-    var ageCategory: String by ParticipantTable.ageCategory
-    var weightCategory: String by ParticipantTable.weightCategory
+    var ageCategory: AgeCategory by ParticipantTable.ageCategory.transform({ it.value }, { AgeCategory(it) })
+    var weightCategory: WeightCategory by ParticipantTable.weightCategory.transform({ it.value }, { WeightCategory(it) })
     var competitionId: UUID by ParticipantTable.competitionId
 }

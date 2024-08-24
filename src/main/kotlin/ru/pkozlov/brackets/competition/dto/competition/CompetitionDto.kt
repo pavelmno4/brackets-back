@@ -9,12 +9,12 @@ import java.util.*
 
 @Serializable
 data class CompetitionDto(
-    @Serializable(with = UUIDSerializer::class)
+    @Serializable(UUIDSerializer::class)
     val id: UUID,
     val title: String,
-    @Serializable(with = LocalDateSerializer::class)
+    @Serializable(LocalDateSerializer::class)
     val startDate: LocalDate,
-    @Serializable(with = LocalDateSerializer::class)
+    @Serializable(LocalDateSerializer::class)
     val endDate: LocalDate,
     val address: String,
     val imagePath: String,

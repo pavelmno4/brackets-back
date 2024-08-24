@@ -8,7 +8,7 @@ import ru.pkozlov.brackets.app.utils.serializer.WeightCategorySerializer
 import ru.pkozlov.brackets.participant.enumeration.Gender
 
 @Serializable
-data class PersistParticipantDto(
+data class CreateParticipantDto(
     val fullName: String,
     val birthYear: Int,
     val gender: Gender,

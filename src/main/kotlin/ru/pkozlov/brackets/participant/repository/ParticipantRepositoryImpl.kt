@@ -3,7 +3,7 @@ package ru.pkozlov.brackets.participant.repository
 import ru.pkozlov.brackets.participant.domain.Participant
 import ru.pkozlov.brackets.participant.domain.ParticipantTable
 import ru.pkozlov.brackets.participant.dto.ParticipantDto
-import ru.pkozlov.brackets.participant.dto.PersistParticipantDto
+import ru.pkozlov.brackets.participant.dto.CreateParticipantDto
 import ru.pkozlov.brackets.participant.mapper.asDto
 import ru.pkozlov.brackets.app.utils.suspendTransaction
 import ru.pkozlov.brackets.participant.dto.PatchParticipantDto
@@ -22,7 +22,7 @@ class ParticipantRepositoryImpl : ParticipantRepository {
             Participant.findById(id)?.asDto()
         }
 
-    override suspend fun create(competitionId: UUID, participant: PersistParticipantDto): ParticipantDto =
+    override suspend fun create(competitionId: UUID, participant: CreateParticipantDto): ParticipantDto =
         suspendTransaction {
             Participant.new {
                 fullName = participant.fullName

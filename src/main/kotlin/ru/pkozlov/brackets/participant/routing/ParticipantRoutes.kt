@@ -7,7 +7,7 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import org.koin.ktor.ext.inject
 import ru.pkozlov.brackets.participant.dto.PatchParticipantDto
-import ru.pkozlov.brackets.participant.dto.PersistParticipantDto
+import ru.pkozlov.brackets.participant.dto.CreateParticipantDto
 import ru.pkozlov.brackets.participant.enumeration.Gender
 import ru.pkozlov.brackets.participant.service.ParticipantService
 import java.util.*
@@ -40,7 +40,7 @@ fun Application.participantRoutes() {
                         ?.run(UUID::fromString)
                         ?: run { call.respond(HttpStatusCode.BadRequest); return@post }
                     
-                    val participant: PersistParticipantDto = call.receive<PersistParticipantDto>()
+                    val participant: CreateParticipantDto = call.receive<CreateParticipantDto>()
 
                     participantService.create(competitionId, participant)
                         .let { createdPaticipant -> call.respond(createdPaticipant) }

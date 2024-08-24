@@ -1,5 +1,6 @@
 package ru.pkozlov.brackets.participant.service
 
+import org.jetbrains.exposed.exceptions.ExposedSQLException
 import ru.pkozlov.brackets.participant.dto.ParticipantDto
 import ru.pkozlov.brackets.participant.dto.PersistParticipantDto
 import ru.pkozlov.brackets.participant.repository.ParticipantRepository
@@ -9,14 +10,30 @@ class ParticipantService(
     private val participantRepository: ParticipantRepository
 ) {
     suspend fun create(competitionId: UUID, participant: PersistParticipantDto): ParticipantDto =
-        participantRepository.create(competitionId, participant)
+        try {
+            participantRepository.create(competitionId, participant)
+        } catch (exc: ExposedSQLException) {
+            throw IllegalArgumentException(exc)
+        }
 
     suspend fun update(id: UUID, updatedParticipant: PersistParticipantDto): ParticipantDto? =
-        participantRepository.update(id, updatedParticipant)
+        try {
+            participantRepository.update(id, updatedParticipant)
+        } catch (exc: ExposedSQLException) {
+            throw IllegalArgumentException(exc)
+        }
 
     suspend fun delete(id: UUID): Unit? =
-        participantRepository.delete(id)
-    
+        try {
+            participantRepository.delete(id)
+        } catch (exc: ExposedSQLException) {
+            throw IllegalArgumentException(exc)
+        }
+
     suspend fun findAllByCompetitionId(competitionId: UUID): List<ParticipantDto> =
-        participantRepository.findAllByCompetitionId(competitionId)
+        try {
+            participantRepository.findAllByCompetitionId(competitionId)
+        } catch (exc: ExposedSQLException) {
+            throw IllegalArgumentException(exc)
+        }
 }

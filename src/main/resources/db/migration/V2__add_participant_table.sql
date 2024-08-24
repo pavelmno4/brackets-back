@@ -10,4 +10,7 @@ create table if not exists participant
     primary key (id)
 );
 
+alter table participant
+    add constraint participant_competition_id_fk foreign key (competition_id) references competition(id) on delete restrict on update restrict;
+
 create index participant_competition_id_idx on participant (competition_id);

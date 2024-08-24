@@ -6,6 +6,7 @@ import ru.pkozlov.brackets.participant.dto.ParticipantDto
 import ru.pkozlov.brackets.participant.dto.PersistParticipantDto
 import ru.pkozlov.brackets.participant.mapper.asDto
 import ru.pkozlov.brackets.app.utils.suspendTransaction
+import ru.pkozlov.brackets.participant.dto.PatchParticipantDto
 import java.util.*
 
 class ParticipantRepositoryImpl : ParticipantRepository {
@@ -24,7 +25,7 @@ class ParticipantRepositoryImpl : ParticipantRepository {
     override suspend fun create(competitionId: UUID, participant: PersistParticipantDto): ParticipantDto =
         suspendTransaction {
             Participant.new {
-                name = participant.name
+                fullName = participant.fullName
                 birthYear = participant.birthYear
                 gender = participant.gender
                 ageCategory = participant.ageCategory
@@ -33,14 +34,15 @@ class ParticipantRepositoryImpl : ParticipantRepository {
             }.asDto()
         }
 
-    override suspend fun update(id: UUID, updatedParticipant: PersistParticipantDto): ParticipantDto? =
+    override suspend fun update(id: UUID, updatedParticipant: PatchParticipantDto): ParticipantDto? =
         suspendTransaction {
             Participant.findByIdAndUpdate(id) { participant ->
-                participant.name = updatedParticipant.name
-                participant.birthYear = updatedParticipant.birthYear
-                participant.gender = updatedParticipant.gender
-                participant.ageCategory = updatedParticipant.ageCategory
-                participant.weightCategory = updatedParticipant.weightCategory
+                if (updatedParticipant.fullName != null) participant.fullName = updatedParticipant.fullName
+                if (updatedParticipant.birthYear != null) participant.birthYear = updatedParticipant.birthYear
+                if (updatedParticipant.gender != null) participant.gender = updatedParticipant.gender
+                if (updatedParticipant.ageCategory != null) participant.ageCategory = updatedParticipant.ageCategory
+                if (updatedParticipant.weightCategory != null) participant.weightCategory = updatedParticipant.weightCategory
+                if (updatedParticipant.weight != null) participant.weight = updatedParticipant.weight
             }?.asDto()
         }
 

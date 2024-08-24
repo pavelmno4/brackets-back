@@ -2,6 +2,7 @@ package ru.pkozlov.brackets.participant.service
 
 import org.jetbrains.exposed.exceptions.ExposedSQLException
 import ru.pkozlov.brackets.participant.dto.ParticipantDto
+import ru.pkozlov.brackets.participant.dto.PatchParticipantDto
 import ru.pkozlov.brackets.participant.dto.PersistParticipantDto
 import ru.pkozlov.brackets.participant.repository.ParticipantRepository
 import java.util.*
@@ -16,7 +17,7 @@ class ParticipantService(
             throw IllegalArgumentException(exc)
         }
 
-    suspend fun update(id: UUID, updatedParticipant: PersistParticipantDto): ParticipantDto? =
+    suspend fun update(id: UUID, updatedParticipant: PatchParticipantDto): ParticipantDto? =
         try {
             participantRepository.update(id, updatedParticipant)
         } catch (exc: ExposedSQLException) {

@@ -6,6 +6,7 @@ import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import org.koin.ktor.ext.inject
+import ru.pkozlov.brackets.participant.dto.PatchParticipantDto
 import ru.pkozlov.brackets.participant.dto.PersistParticipantDto
 import ru.pkozlov.brackets.participant.enumeration.Gender
 import ru.pkozlov.brackets.participant.service.ParticipantService
@@ -49,13 +50,13 @@ fun Application.participantRoutes() {
                 }
             }
 
-            put("/{id}") {
+            patch("/{id}") {
                 try {
                     val id: UUID = call.parameters["id"]
                         ?.run(UUID::fromString)
-                        ?: run { call.respond(HttpStatusCode.BadRequest); return@put }
+                        ?: run { call.respond(HttpStatusCode.BadRequest); return@patch }
 
-                    val participant: PersistParticipantDto = call.receive<PersistParticipantDto>()
+                    val participant: PatchParticipantDto = call.receive<PatchParticipantDto>()
 
                     participantService.update(id, participant)
                         ?.let { updatedParticipant -> call.respond(updatedParticipant) }

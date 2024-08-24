@@ -1,11 +1,12 @@
 create table if not exists participant
 (
     id uuid not null,
-    name varchar(255) not null,
+    full_name varchar(255) not null,
     birth_year integer not null,
     gender varchar(6) not null,
     age_category varchar(255) not null,
     weight_category varchar(255) not null,
+    weight decimal(5, 2),
     competition_id uuid not null,
     primary key (id)
 );

@@ -1,17 +1,30 @@
 package ru.pkozlov.brackets.competition.repository
 
+import org.jetbrains.exposed.sql.and
+import ru.pkozlov.brackets.app.utils.suspendTransaction
 import ru.pkozlov.brackets.competition.domain.Competition
+import ru.pkozlov.brackets.competition.domain.CompetitionTable
 import ru.pkozlov.brackets.competition.dto.competition.CompetitionDto
 import ru.pkozlov.brackets.competition.dto.competition.PersistCompetitionDto
 import ru.pkozlov.brackets.competition.mapper.asDto
-import ru.pkozlov.brackets.app.utils.suspendTransaction
 import java.time.LocalDateTime
 import java.util.*
 
-class CompetitionRepositoryImpl : CompetitionRepository {
-    override suspend fun findAll(): List<CompetitionDto> =
+class CompetitionRepositoryImpl(
+    val now: () -> LocalDateTime
+) : CompetitionRepository {
+    override suspend fun findUpcoming(): List<CompetitionDto> =
         suspendTransaction {
-            Competition.all().map(Competition::asDto)
+            Competition
+                .find { CompetitionTable.endDate greaterEq now().toLocalDate() and (CompetitionTable.deleted eq false) }
+                .map(Competition::asDto)
+        }
+
+    override suspend fun findPast(): List<CompetitionDto> =
+        suspendTransaction {
+            Competition
+                .find { CompetitionTable.endDate less now().toLocalDate() and (CompetitionTable.deleted eq false) }
+                .map(Competition::asDto)
         }
 
     override suspend fun findById(id: UUID): CompetitionDto? =
@@ -29,8 +42,8 @@ class CompetitionRepositoryImpl : CompetitionRepository {
                 imagePath = competition.imagePath
                 categories = competition.categories
                 deleted = false
-                createdAt = LocalDateTime.now()
-                updatedAt = LocalDateTime.now()
+                createdAt = now()
+                updatedAt = now()
             }.asDto()
         }
 
@@ -43,7 +56,7 @@ class CompetitionRepositoryImpl : CompetitionRepository {
                 competition.address = updatedCompetition.address
                 competition.imagePath = updatedCompetition.imagePath
                 competition.categories = updatedCompetition.categories
-                competition.updatedAt = LocalDateTime.now()
+                competition.updatedAt = now()
             }?.asDto()
         }
 
@@ -51,7 +64,7 @@ class CompetitionRepositoryImpl : CompetitionRepository {
         suspendTransaction {
             Competition.findByIdAndUpdate(id) { competition ->
                 competition.deleted = true
-                competition.updatedAt = LocalDateTime.now()
+                competition.updatedAt = now()
             }?.asDto()
         }
 }

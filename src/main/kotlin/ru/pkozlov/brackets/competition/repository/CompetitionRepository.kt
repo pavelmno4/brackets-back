@@ -5,7 +5,8 @@ import ru.pkozlov.brackets.competition.dto.competition.PersistCompetitionDto
 import java.util.*
 
 interface CompetitionRepository {
-    suspend fun findAll(): List<CompetitionDto>
+    suspend fun findUpcoming(): List<CompetitionDto>
+    suspend fun findPast(): List<CompetitionDto>
     suspend fun findById(id: UUID): CompetitionDto?
     suspend fun create(competition: PersistCompetitionDto): CompetitionDto
     suspend fun update(id: UUID, updatedCompetition: PersistCompetitionDto): CompetitionDto?

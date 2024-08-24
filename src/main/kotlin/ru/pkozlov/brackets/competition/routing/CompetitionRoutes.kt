@@ -15,9 +15,13 @@ fun Application.competitionRoutes() {
 
     routing {
         route("/competitions") {
-            get {
-                val showInactive: Boolean = call.request.queryParameters["showInactive"]?.toBoolean() ?: false
-                competitionService.findAll(showInactive)
+            get("/upcoming") {
+                competitionService.findUpcoming()
+                    .let { competitions -> call.respond(competitions) }
+            }
+
+            get("/past") {
+                competitionService.findPast()
                     .let { competitions -> call.respond(competitions) }
             }
 

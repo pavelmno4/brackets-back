@@ -10,6 +10,5 @@ fun Participant.asDto(): ParticipantDto = ParticipantDto(
     gender = gender,
     ageCategory = ageCategory,
     weightCategory = weightCategory,
-    weight = weight,
-    competitionId = competitionId
+    weight = weight
 )

@@ -9,6 +9,7 @@ import ru.pkozlov.brackets.competition.domain.CompetitionTable
 import ru.pkozlov.brackets.app.config.DatabaseConfig
 import ru.pkozlov.brackets.app.exception.SchemaValidationException
 import ru.pkozlov.brackets.participant.domain.ParticipantTable
+import ru.pkozlov.brackets.participant.domain.TeamTable
 
 fun Application.configureDatabaseMigration() {
     val config: DatabaseConfig by inject<DatabaseConfig>()
@@ -20,10 +21,10 @@ fun Application.configureDatabaseMigration() {
         .migrate()
 
     transaction {
-        SchemaUtils.statementsRequiredForDatabaseMigration(CompetitionTable, ParticipantTable)
+        SchemaUtils.statementsRequiredForDatabaseMigration(CompetitionTable, ParticipantTable, TeamTable)
             .takeIf { it.isNotEmpty() }
             ?.let { statements ->
-                throw SchemaValidationException("Tables and objects are mismatch. Execute statements:\n${statements.joinToString(separator = "\n")}")
+                throw SchemaValidationException("Tables and entity objects are mismatch. Execute statements:\n${statements.joinToString(separator = "\n")}")
             }
     }
 }

@@ -10,5 +10,6 @@ fun Participant.asDto(): ParticipantDto = ParticipantDto(
     gender = gender,
     ageCategory = ageCategory,
     weightCategory = weightCategory,
-    weight = weight
+    weight = weight,
+    team = team.name
 )

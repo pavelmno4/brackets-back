@@ -23,5 +23,6 @@ data class ParticipantDto(
     @Serializable(WeightCategorySerializer::class)
     val weightCategory: WeightCategory,
     @Serializable(BigDecimalSerializer::class)
-    val weight: BigDecimal?
+    val weight: BigDecimal?,
+    val team: String
 )

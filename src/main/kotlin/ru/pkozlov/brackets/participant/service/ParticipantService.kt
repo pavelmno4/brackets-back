@@ -1,9 +1,9 @@
 package ru.pkozlov.brackets.participant.service
 
 import org.jetbrains.exposed.exceptions.ExposedSQLException
+import ru.pkozlov.brackets.participant.dto.CreateParticipantDto
 import ru.pkozlov.brackets.participant.dto.ParticipantDto
 import ru.pkozlov.brackets.participant.dto.PatchParticipantDto
-import ru.pkozlov.brackets.participant.dto.CreateParticipantDto
 import ru.pkozlov.brackets.participant.repository.ParticipantRepository
 import java.util.*
 

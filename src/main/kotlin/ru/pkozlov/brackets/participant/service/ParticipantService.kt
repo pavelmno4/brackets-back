@@ -4,6 +4,7 @@ import org.jetbrains.exposed.exceptions.ExposedSQLException
 import ru.pkozlov.brackets.participant.dto.CreateParticipantDto
 import ru.pkozlov.brackets.participant.dto.ParticipantDto
 import ru.pkozlov.brackets.participant.dto.PatchParticipantDto
+import ru.pkozlov.brackets.participant.dto.criteria.Criteria
 import ru.pkozlov.brackets.participant.repository.ParticipantRepository
 import java.util.*
 
@@ -31,9 +32,9 @@ class ParticipantService(
             throw IllegalArgumentException(exc)
         }
 
-    suspend fun findAllByCompetitionId(competitionId: UUID): List<ParticipantDto> =
+    suspend fun findAllByCriteria(competitionId: UUID, criteria: Collection<Criteria<*>>): List<ParticipantDto> =
         try {
-            participantRepository.findAllByCompetitionId(competitionId)
+            participantRepository.findAllByCriteria(competitionId, criteria)
         } catch (exc: ExposedSQLException) {
             throw IllegalArgumentException(exc)
         }

@@ -6,8 +6,11 @@ import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import org.koin.ktor.ext.inject
+import ru.pkozlov.brackets.app.dto.AgeCategory
+import ru.pkozlov.brackets.app.dto.WeightCategory
 import ru.pkozlov.brackets.participant.dto.PatchParticipantDto
 import ru.pkozlov.brackets.participant.dto.CreateParticipantDto
+import ru.pkozlov.brackets.participant.dto.criteria.*
 import ru.pkozlov.brackets.participant.enumeration.Gender
 import ru.pkozlov.brackets.participant.service.ParticipantService
 import java.util.*
@@ -22,13 +25,17 @@ fun Application.participantRoutes() {
                     val competitionId: UUID = call.parameters["competitionId"]
                         ?.run(UUID::fromString)
                         ?: run { call.respond(HttpStatusCode.BadRequest); return@get }
-                    
-                    val gender: Gender? = call.request.queryParameters["gender"]
-                        ?.run(Gender::valueOf)
 
-                    participantService.findAllByCompetitionId(competitionId)
+                    val criteria: Set<Criteria<*>> = setOfNotNull(
+                        call.request.queryParameters["gender"]?.run(Gender::valueOf)?.run(::GenderCriteria),
+                        call.request.queryParameters["ageCategory"]?.run(::AgeCategory)?.run(::AgeCategoryCriteria),
+                        call.request.queryParameters["weightCategory"]?.run(::WeightCategory)?.run(::WeightCategoryCriteria),
+                        call.request.queryParameters["team"]?.run(::TeamCriteria),
+                    )
+
+                    participantService.findAllByCriteria(competitionId, criteria)
                         .let { participants -> call.respond(participants) }
-                    
+
                 } catch (exc: IllegalArgumentException) {
                     call.respond(HttpStatusCode.BadRequest)
                 }
@@ -39,12 +46,12 @@ fun Application.participantRoutes() {
                     val competitionId: UUID = call.parameters["competitionId"]
                         ?.run(UUID::fromString)
                         ?: run { call.respond(HttpStatusCode.BadRequest); return@post }
-                    
+
                     val participant: CreateParticipantDto = call.receive<CreateParticipantDto>()
 
                     participantService.create(competitionId, participant)
                         .let { createdPaticipant -> call.respond(createdPaticipant) }
-                    
+
                 } catch (exc: IllegalArgumentException) {
                     call.respond(HttpStatusCode.BadRequest)
                 }
@@ -61,7 +68,7 @@ fun Application.participantRoutes() {
                     participantService.update(id, participant)
                         ?.let { updatedParticipant -> call.respond(updatedParticipant) }
                         ?: call.respond(HttpStatusCode.NoContent)
-                    
+
                 } catch (exc: IllegalArgumentException) {
                     call.respond(HttpStatusCode.BadRequest)
                 }
@@ -72,11 +79,11 @@ fun Application.participantRoutes() {
                     val id: UUID = call.parameters["id"]
                         ?.run(UUID::fromString)
                         ?: run { call.respond(HttpStatusCode.BadRequest); return@delete }
-    
+
                     participantService.delete(id)
                         ?.run { call.response.status(HttpStatusCode.OK) }
                         ?: call.respond(HttpStatusCode.NoContent)
-                    
+
                 } catch (exc: IllegalArgumentException) {
                     call.respond(HttpStatusCode.BadRequest)
                 }

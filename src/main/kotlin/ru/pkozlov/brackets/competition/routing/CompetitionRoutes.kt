@@ -26,10 +26,15 @@ fun Application.competitionRoutes() {
             }
 
             get("/{id}") {
-                val id: UUID = call.parameters["id"]?.run(UUID::fromString) ?: throw IllegalStateException()
-                competitionService.findById(id)
-                    ?.let { competition -> call.respond(competition) }
-                    ?: call.respond(HttpStatusCode.NoContent)
+                try {
+                    val id: UUID = call.parameters["id"]?.run(UUID::fromString) ?: throw IllegalStateException()
+                    competitionService.findById(id)
+                        ?.let { competition -> call.respond(competition) }
+                        ?: call.respond(HttpStatusCode.NoContent)
+
+                } catch (exc: IllegalArgumentException) {
+                    call.respond(HttpStatusCode.BadRequest)
+                }
             }
 
             post {
@@ -40,12 +45,29 @@ fun Application.competitionRoutes() {
             }
 
             put("/{id}") {
-                val id: UUID = call.parameters["id"]?.run(UUID::fromString) ?: throw IllegalStateException()
-                val competition: PersistCompetitionDto = call.receive<PersistCompetitionDto>()
+                try {
+                    val id: UUID = call.parameters["id"]?.run(UUID::fromString) ?: throw IllegalStateException()
+                    val competition: PersistCompetitionDto = call.receive<PersistCompetitionDto>()
 
-                competitionService.update(id, competition)
-                    ?.let { updatedCompetition -> call.respond(updatedCompetition) }
-                    ?: call.respond(HttpStatusCode.NoContent)
+                    competitionService.update(id, competition)
+                        ?.let { updatedCompetition -> call.respond(updatedCompetition) }
+                        ?: call.respond(HttpStatusCode.NoContent)
+
+                } catch (exc: IllegalArgumentException) {
+                    call.respond(HttpStatusCode.BadRequest)
+                }
+            }
+
+            get("/{id}/categories") {
+                try {
+                    val id: UUID = call.parameters["id"]?.run(UUID::fromString) ?: throw IllegalStateException()
+                    competitionService.findById(id)?.categories
+                        ?.let { categories -> call.respond(categories) }
+                        ?: call.respond(HttpStatusCode.NoContent)
+
+                } catch (exc: IllegalArgumentException) {
+                    call.respond(HttpStatusCode.BadRequest)
+                }
             }
         }
     }

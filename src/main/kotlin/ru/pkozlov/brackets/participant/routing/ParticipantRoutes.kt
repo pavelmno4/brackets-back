@@ -10,6 +10,7 @@ import ru.pkozlov.brackets.app.dto.AgeCategory
 import ru.pkozlov.brackets.app.dto.WeightCategory
 import ru.pkozlov.brackets.participant.dto.PatchParticipantDto
 import ru.pkozlov.brackets.participant.dto.CreateParticipantDto
+import ru.pkozlov.brackets.participant.dto.ParticipantDto
 import ru.pkozlov.brackets.participant.dto.criteria.*
 import ru.pkozlov.brackets.participant.enumeration.Gender
 import ru.pkozlov.brackets.participant.service.ParticipantService
@@ -83,6 +84,21 @@ fun Application.participantRoutes() {
                     participantService.delete(id)
                         ?.run { call.response.status(HttpStatusCode.OK) }
                         ?: call.respond(HttpStatusCode.NoContent)
+
+                } catch (exc: IllegalArgumentException) {
+                    call.respond(HttpStatusCode.BadRequest)
+                }
+            }
+
+            get("/teams") {
+                try {
+                    val competitionId: UUID = call.parameters["competitionId"]
+                        ?.run(UUID::fromString)
+                        ?: run { call.respond(HttpStatusCode.BadRequest); return@get }
+
+                    participantService.findAllByCriteria(competitionId, emptySet())
+                        .map(ParticipantDto::team).toSet()
+                        .let { teams -> call.respond(teams) }
 
                 } catch (exc: IllegalArgumentException) {
                     call.respond(HttpStatusCode.BadRequest)

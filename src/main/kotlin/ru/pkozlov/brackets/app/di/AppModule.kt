@@ -7,12 +7,13 @@ import kotlinx.serialization.serializer
 import org.koin.core.module.Module
 import org.koin.dsl.module
 import ru.pkozlov.brackets.app.config.DatabaseConfig
+import ru.pkozlov.brackets.auth.di.authModule
 import ru.pkozlov.brackets.competition.di.competitionModule
 import ru.pkozlov.brackets.participant.di.participantModule
 import java.time.LocalDateTime
 
 val appModule: Module = module {
-    includes(competitionModule, participantModule)
+    includes(competitionModule, participantModule, authModule)
 
     single<DatabaseConfig> {
         val conf = ConfigFactory.load().getConfig("database")

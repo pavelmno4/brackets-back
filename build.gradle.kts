@@ -6,6 +6,7 @@ val exposed_version: String by project
 val postgres_version: String by project
 val hikari_version: String by project
 val flyway_version: String by project
+val jasypt_version: String by project
 val logback_version: String by project
 val mockk_version: String by project
 
@@ -41,6 +42,8 @@ dependencies {
     implementation("io.ktor:ktor-server-host-common-jvm")
     implementation("io.ktor:ktor-server-status-pages-jvm")
     implementation("io.ktor:ktor-server-netty-jvm")
+    implementation("io.ktor:ktor-server-sessions")
+    implementation("io.ktor:ktor-server-auth")
 
     /** JetBrains */
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-hocon")
@@ -54,6 +57,9 @@ dependencies {
     implementation("org.jetbrains.exposed:exposed-java-time:$exposed_version")
     implementation("org.jetbrains.exposed:exposed-json:$exposed_version")
     implementation("org.flywaydb:flyway-database-postgresql:$flyway_version")
+
+    /** Jasypt */
+    implementation("org.jasypt:jasypt:$jasypt_version")
 
     /** Logging */
     implementation("ch.qos.logback:logback-classic:$logback_version")

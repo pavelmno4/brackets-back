@@ -5,9 +5,10 @@ import org.flywaydb.core.Flyway
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.koin.ktor.ext.inject
-import ru.pkozlov.brackets.competition.domain.CompetitionTable
 import ru.pkozlov.brackets.app.config.DatabaseConfig
 import ru.pkozlov.brackets.app.exception.SchemaValidationException
+import ru.pkozlov.brackets.auth.domain.UserTable
+import ru.pkozlov.brackets.competition.domain.CompetitionTable
 import ru.pkozlov.brackets.participant.domain.ParticipantTable
 import ru.pkozlov.brackets.participant.domain.TeamTable
 
@@ -21,7 +22,12 @@ fun Application.configureDatabaseMigration() {
         .migrate()
 
     transaction {
-        SchemaUtils.statementsRequiredForDatabaseMigration(CompetitionTable, ParticipantTable, TeamTable)
+        SchemaUtils.statementsRequiredForDatabaseMigration(
+            CompetitionTable,
+            ParticipantTable,
+            TeamTable,
+            UserTable
+        )
             .takeIf { it.isNotEmpty() }
             ?.let { statements ->
                 throw SchemaValidationException("Tables and entity objects are mismatch. Execute statements:\n${statements.joinToString(separator = "\n")}")

@@ -2,15 +2,16 @@ package ru.pkozlov.brackets.participant.routing
 
 import io.ktor.http.*
 import io.ktor.server.application.*
+import io.ktor.server.auth.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import org.koin.ktor.ext.inject
 import ru.pkozlov.brackets.app.dto.AgeCategory
 import ru.pkozlov.brackets.app.dto.WeightCategory
-import ru.pkozlov.brackets.participant.dto.PatchParticipantDto
 import ru.pkozlov.brackets.participant.dto.CreateParticipantDto
 import ru.pkozlov.brackets.participant.dto.ParticipantDto
+import ru.pkozlov.brackets.participant.dto.PatchParticipantDto
 import ru.pkozlov.brackets.participant.dto.criteria.*
 import ru.pkozlov.brackets.participant.enumeration.Gender
 import ru.pkozlov.brackets.participant.service.ParticipantService
@@ -58,35 +59,39 @@ fun Application.participantRoutes() {
                 }
             }
 
-            patch("/{id}") {
-                try {
-                    val id: UUID = call.parameters["id"]
-                        ?.run(UUID::fromString)
-                        ?: run { call.respond(HttpStatusCode.BadRequest); return@patch }
+            authenticate("auth-session") {
+                patch("/{id}") {
+                    try {
+                        val id: UUID = call.parameters["id"]
+                            ?.run(UUID::fromString)
+                            ?: run { call.respond(HttpStatusCode.BadRequest); return@patch }
 
-                    val participant: PatchParticipantDto = call.receive<PatchParticipantDto>()
+                        val participant: PatchParticipantDto = call.receive<PatchParticipantDto>()
 
-                    participantService.update(id, participant)
-                        ?.let { updatedParticipant -> call.respond(updatedParticipant) }
-                        ?: call.respond(HttpStatusCode.NoContent)
+                        participantService.update(id, participant)
+                            ?.let { updatedParticipant -> call.respond(updatedParticipant) }
+                            ?: call.respond(HttpStatusCode.NoContent)
 
-                } catch (exc: IllegalArgumentException) {
-                    call.respond(HttpStatusCode.BadRequest)
+                    } catch (exc: IllegalArgumentException) {
+                        call.respond(HttpStatusCode.BadRequest)
+                    }
                 }
             }
 
-            delete("/{id}") {
-                try {
-                    val id: UUID = call.parameters["id"]
-                        ?.run(UUID::fromString)
-                        ?: run { call.respond(HttpStatusCode.BadRequest); return@delete }
+            authenticate("auth-session") {
+                delete("/{id}") {
+                    try {
+                        val id: UUID = call.parameters["id"]
+                            ?.run(UUID::fromString)
+                            ?: run { call.respond(HttpStatusCode.BadRequest); return@delete }
 
-                    participantService.delete(id)
-                        ?.run { call.response.status(HttpStatusCode.OK) }
-                        ?: call.respond(HttpStatusCode.NoContent)
+                        participantService.delete(id)
+                            ?.run { call.response.status(HttpStatusCode.OK) }
+                            ?: call.respond(HttpStatusCode.NoContent)
 
-                } catch (exc: IllegalArgumentException) {
-                    call.respond(HttpStatusCode.BadRequest)
+                    } catch (exc: IllegalArgumentException) {
+                        call.respond(HttpStatusCode.BadRequest)
+                    }
                 }
             }
 

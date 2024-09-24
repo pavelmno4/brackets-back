@@ -21,7 +21,7 @@ fun Application.authRoutes() {
             }
         }
 
-        get("/logout") {
+        post("/logout") {
             call.sessions.clear<UserIdPrincipal>()
             call.respond(HttpStatusCode.OK)
         }

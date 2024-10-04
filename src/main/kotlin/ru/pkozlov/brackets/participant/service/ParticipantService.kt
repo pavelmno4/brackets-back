@@ -35,6 +35,7 @@ class ParticipantService(
     suspend fun findAllByCriteria(competitionId: UUID, criteria: Collection<Criteria<*>>): List<ParticipantDto> =
         try {
             participantRepository.findAllByCriteria(competitionId, criteria)
+                .sortedBy { participant -> participant.fullName }
         } catch (exc: ExposedSQLException) {
             throw IllegalArgumentException(exc)
         }

@@ -19,9 +19,11 @@ class CompetitionService(
 
     suspend fun findUpcoming(): List<CompetitionDto> =
         competitionRepository.findUpcoming()
+            .sortedByDescending { competition -> competition.endDate }
 
     suspend fun findPast(): List<CompetitionDto> =
         competitionRepository.findPast()
+            .sortedByDescending { competition -> competition.endDate }
 
     suspend fun findById(id: UUID): CompetitionDto? =
         competitionRepository.findById(id)

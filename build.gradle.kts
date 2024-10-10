@@ -26,6 +26,14 @@ application {
     applicationDefaultJvmArgs = listOf("-Dio.ktor.development=$isDevelopment")
 }
 
+ktor {
+    docker {
+        jreVersion.set(JavaVersion.VERSION_17)
+        localImageName.set("brackets")
+        imageTag.set("1.0.0")
+    }
+}
+
 repositories {
     mavenCentral()
 }
@@ -34,7 +42,6 @@ dependencies {
     /** Koin */
     implementation("io.insert-koin:koin-ktor:$koin_version")
     implementation("io.insert-koin:koin-logger-slf4j:$koin_version")
-
 
     /** Ktor */
     implementation("io.ktor:ktor-serialization-kotlinx-json-jvm")

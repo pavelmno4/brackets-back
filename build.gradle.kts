@@ -29,7 +29,7 @@ application {
 ktor {
     docker {
         jreVersion.set(JavaVersion.VERSION_17)
-        localImageName.set("brackets")
+        localImageName.set("brackets-back")
         imageTag.set("1.0.0")
     }
 }

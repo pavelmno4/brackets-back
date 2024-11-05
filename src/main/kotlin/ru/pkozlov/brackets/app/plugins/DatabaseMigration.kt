@@ -22,7 +22,7 @@ fun Application.configureDatabaseMigration() {
         .migrate()
 
     transaction {
-        SchemaUtils.statementsRequiredForDatabaseMigration(
+        SchemaUtils.statementsRequiredToActualizeScheme(
             CompetitionTable,
             ParticipantTable,
             TeamTable,

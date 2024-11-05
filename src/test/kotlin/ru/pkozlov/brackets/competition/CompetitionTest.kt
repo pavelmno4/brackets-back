@@ -8,7 +8,6 @@ import io.mockk.every
 import io.mockk.mockkClass
 import org.junit.Rule
 import org.koin.core.context.stopKoin
-import org.koin.dsl.module
 import org.koin.test.KoinTest
 import org.koin.test.KoinTestRule
 import org.koin.test.mock.MockProviderRule
@@ -18,8 +17,6 @@ import ru.pkozlov.brackets.app.dto.WeightCategory
 import ru.pkozlov.brackets.competition.dto.category.Category
 import ru.pkozlov.brackets.competition.dto.competition.CompetitionDto
 import ru.pkozlov.brackets.competition.dto.competition.PersistCompetitionDto
-import ru.pkozlov.brackets.competition.repository.CompetitionRepository
-import ru.pkozlov.brackets.competition.service.CompetitionService
 import java.time.LocalDate
 import java.time.LocalDateTime
 import kotlin.test.AfterTest
@@ -30,13 +27,7 @@ import kotlin.test.assertEquals
 class CompetitionTest : KoinTest {
     @Rule
     fun koin() = KoinTestRule.create {
-        modules(
-            module {
-                single<CompetitionRepository> { FakeRepository(get()) }
-                single<CompetitionService> { CompetitionService(get()) }
-                single<() -> LocalDateTime> { { LocalDateTime.now() } }
-            }
-        )
+        initKoinModules()
     }
 
     @Rule

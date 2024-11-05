@@ -11,9 +11,9 @@ val logback_version: String by project
 val mockk_version: String by project
 
 plugins {
-    kotlin("jvm") version "2.0.0"
-    id("io.ktor.plugin") version "2.3.12"
-    id("org.jetbrains.kotlin.plugin.serialization") version "2.0.0"
+    kotlin("jvm") version "2.0.20"
+    id("io.ktor.plugin") version "3.0.1"
+    id("org.jetbrains.kotlin.plugin.serialization") version "2.0.21"
 }
 
 group = "ru.pkozlov"
@@ -74,7 +74,8 @@ dependencies {
     /** Tests */
     testImplementation("io.insert-koin:koin-test:$koin_version")
     testImplementation("io.insert-koin:koin-test-junit4:$koin_version")
-    testImplementation("io.ktor:ktor-server-tests-jvm")
+    testImplementation("io.ktor:ktor-server-test-host")
     testImplementation("io.ktor:ktor-client-content-negotiation-jvm")
+    testImplementation("org.jetbrains.kotlin:kotlin-test")
     testImplementation("io.mockk:mockk:$mockk_version")
 }

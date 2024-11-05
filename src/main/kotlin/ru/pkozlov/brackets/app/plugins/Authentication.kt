@@ -8,6 +8,7 @@ import io.ktor.server.sessions.*
 import io.ktor.util.*
 import org.koin.ktor.ext.inject
 import ru.pkozlov.brackets.app.config.AuthConfig
+import ru.pkozlov.brackets.auth.dto.UserSession
 import ru.pkozlov.brackets.auth.service.UserService
 
 const val ONE_DAY_IN_SECONDS = 60 * 60 * 24L
@@ -26,7 +27,7 @@ fun Application.configureAuthentication() {
             }
         }
 
-        session<UserIdPrincipal>("auth-session") {
+        session<UserSession>("auth-session") {
             validate { session -> session }
             challenge {
                 call.respond(HttpStatusCode.Unauthorized, "Invalid session")
@@ -35,7 +36,7 @@ fun Application.configureAuthentication() {
     }
 
     install(Sessions) {
-        cookie<UserIdPrincipal>("user_session", SessionStorageMemory()) {
+        cookie<UserSession>("user_session", SessionStorageMemory()) {
             cookie.path = "/"
             cookie.maxAgeInSeconds = ONE_DAY_IN_SECONDS
 

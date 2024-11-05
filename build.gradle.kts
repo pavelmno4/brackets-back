@@ -1,4 +1,3 @@
-
 val kotlin_version: String by project
 val ktor_version: String by project
 val koin_version: String by project
@@ -26,11 +25,26 @@ application {
     applicationDefaultJvmArgs = listOf("-Dio.ktor.development=$isDevelopment")
 }
 
-ktor {
-    docker {
-        jreVersion.set(JavaVersion.VERSION_17)
-        localImageName.set("brackets-back")
-        imageTag.set("1.0.0")
+jib {
+    to {
+        image = "brackets-back"
+        tags = setOf("1.0.0")
+    }
+    from {
+        image = "eclipse-temurin:17-jre"
+        platforms {
+            platform {
+                architecture = "amd64"
+                os = "linux"
+            }
+            platform {
+                architecture = "arm64"
+                os = "linux"
+            }
+        }
+    }
+    container {
+        creationTime.set("USE_CURRENT_TIMESTAMP")
     }
 }
 

@@ -19,5 +19,6 @@ data class PatchParticipantDto(
     @Serializable(WeightCategorySerializer::class)
     val weightCategory: WeightCategory? = null,
     @Serializable(BigDecimalSerializer::class)
-    val weight: BigDecimal? = null
+    val weight: BigDecimal? = null,
+    val team: String? = null
 )

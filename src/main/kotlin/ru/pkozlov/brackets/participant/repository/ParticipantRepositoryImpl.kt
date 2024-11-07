@@ -80,6 +80,7 @@ class ParticipantRepositoryImpl : ParticipantRepository {
                 if (updatedParticipant.ageCategory != null) participant.ageCategory = updatedParticipant.ageCategory
                 if (updatedParticipant.weightCategory != null) participant.weightCategory = updatedParticipant.weightCategory
                 if (updatedParticipant.weight != null) participant.weight = updatedParticipant.weight
+                if (updatedParticipant.team != null) participant.team = findOrCreateTeam(updatedParticipant.team)
             }?.load(Participant::team)?.asDto()
         }
 

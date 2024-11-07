@@ -3,10 +3,12 @@ package ru.pkozlov.brackets.competition.service
 import ru.pkozlov.brackets.competition.dto.competition.CompetitionDto
 import ru.pkozlov.brackets.competition.dto.competition.PersistCompetitionDto
 import ru.pkozlov.brackets.competition.repository.CompetitionRepository
+import java.time.LocalDateTime
 import java.util.*
 
 class CompetitionService(
-    private val competitionRepository: CompetitionRepository
+    private val competitionRepository: CompetitionRepository,
+    private val now: () -> LocalDateTime
 ) {
     suspend fun create(competition: PersistCompetitionDto): CompetitionDto =
         competitionRepository.create(competition)
@@ -27,4 +29,9 @@ class CompetitionService(
 
     suspend fun findById(id: UUID): CompetitionDto? =
         competitionRepository.findById(id)
+
+    suspend fun isPassed(id: UUID): Boolean =
+        competitionRepository.findById(id)
+            ?.run { endDate < now().toLocalDate() }
+            ?: true
 }

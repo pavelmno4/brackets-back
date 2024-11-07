@@ -9,6 +9,7 @@ import io.ktor.server.routing.*
 import org.koin.ktor.ext.inject
 import ru.pkozlov.brackets.app.dto.AgeCategory
 import ru.pkozlov.brackets.app.dto.WeightCategory
+import ru.pkozlov.brackets.competition.service.CompetitionService
 import ru.pkozlov.brackets.participant.dto.CreateParticipantDto
 import ru.pkozlov.brackets.participant.dto.ParticipantDto
 import ru.pkozlov.brackets.participant.dto.PatchParticipantDto
@@ -18,6 +19,7 @@ import ru.pkozlov.brackets.participant.service.ParticipantService
 import java.util.*
 
 fun Application.participantRoutes() {
+    val competitionService: CompetitionService by inject()
     val participantService: ParticipantService by inject()
 
     routing {
@@ -49,10 +51,14 @@ fun Application.participantRoutes() {
                         ?.run(UUID::fromString)
                         ?: run { call.respond(HttpStatusCode.BadRequest); return@post }
 
+                    if (competitionService.isPassed(competitionId)) {
+                        call.respond(HttpStatusCode.Forbidden); return@post
+                    }
+
                     val participant: CreateParticipantDto = call.receive<CreateParticipantDto>()
 
                     participantService.create(competitionId, participant)
-                        .let { createdPaticipant -> call.respond(createdPaticipant) }
+                        .let { createdParticipant -> call.respond(createdParticipant) }
 
                 } catch (exc: IllegalArgumentException) {
                     call.respond(HttpStatusCode.BadRequest)
@@ -62,9 +68,17 @@ fun Application.participantRoutes() {
             authenticate("auth-session") {
                 patch("/{id}") {
                     try {
+                        val competitionId: UUID = call.parameters["competitionId"]
+                            ?.run(UUID::fromString)
+                            ?: run { call.respond(HttpStatusCode.BadRequest); return@patch }
+
                         val id: UUID = call.parameters["id"]
                             ?.run(UUID::fromString)
                             ?: run { call.respond(HttpStatusCode.BadRequest); return@patch }
+
+                        if (competitionService.isPassed(competitionId)) {
+                            call.respond(HttpStatusCode.Forbidden); return@patch
+                        }
 
                         val participant: PatchParticipantDto = call.receive<PatchParticipantDto>()
 
@@ -81,9 +95,17 @@ fun Application.participantRoutes() {
             authenticate("auth-session") {
                 delete("/{id}") {
                     try {
+                        val competitionId: UUID = call.parameters["competitionId"]
+                            ?.run(UUID::fromString)
+                            ?: run { call.respond(HttpStatusCode.BadRequest); return@delete }
+
                         val id: UUID = call.parameters["id"]
                             ?.run(UUID::fromString)
                             ?: run { call.respond(HttpStatusCode.BadRequest); return@delete }
+
+                        if (competitionService.isPassed(competitionId)) {
+                            call.respond(HttpStatusCode.Forbidden); return@delete
+                        }
 
                         participantService.delete(id)
                             ?.run { call.response.status(HttpStatusCode.OK) }

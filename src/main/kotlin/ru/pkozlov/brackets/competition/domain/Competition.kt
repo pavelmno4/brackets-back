@@ -8,7 +8,7 @@ import org.jetbrains.exposed.sql.Column
 import org.jetbrains.exposed.sql.javatime.date
 import org.jetbrains.exposed.sql.javatime.datetime
 import org.jetbrains.exposed.sql.json.jsonb
-import ru.pkozlov.brackets.competition.dto.category.Category
+import ru.pkozlov.brackets.common.dto.Category
 import ru.pkozlov.brackets.app.utils.json
 import java.time.LocalDate
 import java.time.LocalDateTime

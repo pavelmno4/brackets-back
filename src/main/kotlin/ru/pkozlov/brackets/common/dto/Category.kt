@@ -1,4 +1,4 @@
-package ru.pkozlov.brackets.competition.dto.category
+package ru.pkozlov.brackets.common.dto
 
 import kotlinx.serialization.Serializable
 import ru.pkozlov.brackets.app.dto.AgeCategory

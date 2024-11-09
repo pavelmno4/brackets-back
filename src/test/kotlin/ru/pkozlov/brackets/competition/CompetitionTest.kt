@@ -14,7 +14,7 @@ import org.koin.test.mock.MockProviderRule
 import org.koin.test.mock.declareMock
 import ru.pkozlov.brackets.app.dto.AgeCategory
 import ru.pkozlov.brackets.app.dto.WeightCategory
-import ru.pkozlov.brackets.competition.dto.category.Category
+import ru.pkozlov.brackets.common.dto.Category
 import ru.pkozlov.brackets.competition.dto.competition.CompetitionDto
 import ru.pkozlov.brackets.competition.dto.competition.PersistCompetitionDto
 import java.time.LocalDate

@@ -8,6 +8,9 @@ val flyway_version: String by project
 val jasypt_version: String by project
 val logback_version: String by project
 val mockk_version: String by project
+val apache_poi_version: String by project
+val jxls_version: String by project
+val commons_logging: String by project
 
 plugins {
     kotlin("jvm") version "2.0.20"
@@ -82,8 +85,14 @@ dependencies {
     /** Jasypt */
     implementation("org.jasypt:jasypt:$jasypt_version")
 
+    /** Excel */
+    implementation("org.apache.poi:poi:$apache_poi_version")
+    implementation("org.apache.poi:poi-ooxml:$apache_poi_version")
+    implementation("org.jxls:jxls-poi:$jxls_version")
+
     /** Logging */
     implementation("ch.qos.logback:logback-classic:$logback_version")
+    implementation("commons-logging:commons-logging:$commons_logging")
 
     /** Tests */
     testImplementation("io.insert-koin:koin-test:$koin_version")

@@ -5,6 +5,7 @@ import io.ktor.http.ContentDisposition.Companion.Attachment
 import io.ktor.http.ContentDisposition.Parameters.FileName
 import io.ktor.http.HttpHeaders.ContentDisposition
 import io.ktor.server.application.*
+import io.ktor.server.auth.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import org.koin.ktor.ext.inject
@@ -16,16 +17,18 @@ fun Application.gridRoutes() {
 
     routing {
         route("/competitions/{competitionId}/grid") {
-            get {
-                val competitionId: UUID = call.parameters["competitionId"]
-                    ?.run(UUID::fromString)
-                    ?: run { call.respond(HttpStatusCode.BadRequest); return@get }
+            authenticate("auth-session") {
+                get {
+                    val competitionId: UUID = call.parameters["competitionId"]
+                        ?.run(UUID::fromString)
+                        ?: run { call.respond(HttpStatusCode.BadRequest); return@get }
 
-                call.response.header(
-                    name = ContentDisposition,
-                    value = Attachment.withParameter(FileName, "competition_grid.zip").toString()
-                )
-                call.respondOutputStream { gridService.generate(competitionId, buffered()) }
+                    call.response.header(
+                        name = ContentDisposition,
+                        value = Attachment.withParameter(FileName, "competition_grid.zip").toString()
+                    )
+                    call.respondOutputStream { gridService.generate(competitionId, buffered()) }
+                }
             }
         }
     }

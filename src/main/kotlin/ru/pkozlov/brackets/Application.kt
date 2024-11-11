@@ -2,7 +2,6 @@ package ru.pkozlov.brackets
 
 import io.ktor.server.application.*
 import io.ktor.server.plugins.autohead.*
-import io.ktor.server.plugins.partialcontent.*
 import org.koin.ktor.plugin.Koin
 import org.koin.logger.slf4jLogger
 import ru.pkozlov.brackets.app.di.appModule
@@ -18,7 +17,6 @@ fun Application.module() {
         modules(appModule)
     }
     install(AutoHeadResponse)
-    install(PartialContent)
     configureAuthentication()
     configureSerialization()
     configureDatabase()

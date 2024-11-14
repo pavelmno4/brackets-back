@@ -42,7 +42,9 @@ class GridService(
                 .filter { participant -> participant.weight != null }
                 .groupBy { it.ageCategory }
                 .mapValues { (_, participants) ->
-                    participants.groupBy({ it.weightCategory }, { it.asGridParticipant() })
+                    participants
+                        .groupBy({ it.weightCategory }, { it.asGridParticipant() })
+                        .toSortedMap(compareBy { it.value })
                 }
 
         val grids: Map<AgeCategory, List<GridDto>> = participants.mapValues { (ageCategory, weightCategoryMap) ->
@@ -57,9 +59,8 @@ class GridService(
         }
 
         withContext(Dispatchers.IO) {
-            createOutputStream(competitionId)
-                .run(::ZipOutputStream)
-                .use { zipOutput ->
+            createOutputStream(competitionId).use { file ->
+                ZipOutputStream(file).use { zipOutput ->
                     grids.forEach { (ageCategory, grids) ->
                         val zipEntry = ZipEntry("${ageCategory.value}.xlsx")
                         zipOutput.putNextEntry(zipEntry)
@@ -67,6 +68,7 @@ class GridService(
                         zipOutput.closeEntry()
                     }
                 }
+            }
         }
     }
 

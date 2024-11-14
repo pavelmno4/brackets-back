@@ -1,5 +1,8 @@
 package ru.pkozlov.brackets.grid.service
 
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import ru.pkozlov.brackets.app.config.FilesConfig
 import ru.pkozlov.brackets.app.dto.AgeCategory
 import ru.pkozlov.brackets.app.dto.WeightCategory
 import ru.pkozlov.brackets.common.exception.NotFoundException
@@ -11,10 +14,13 @@ import ru.pkozlov.brackets.grid.mapper.asGridParticipant
 import ru.pkozlov.brackets.participant.dto.criteria.GenderCriteria
 import ru.pkozlov.brackets.participant.enumeration.Gender
 import ru.pkozlov.brackets.participant.service.ParticipantService
-import java.io.BufferedOutputStream
+import java.io.FileOutputStream
 import java.util.*
 import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
+import kotlin.io.path.Path
+import kotlin.io.path.createDirectory
+import kotlin.io.path.exists
 
 /**
  * Inherits code from [brackets-excel](https://github.com/pavelmno4/brackets-excel)
@@ -23,9 +29,10 @@ class GridService(
     private val gridGenerationComponent: GridGenerationComponent,
     private val competitionService: CompetitionService,
     private val participantService: ParticipantService,
-    private val templateComponent: TemplateComponent
+    private val templateComponent: TemplateComponent,
+    private val filesConfig: FilesConfig
 ) {
-    suspend fun generate(competitionId: UUID, outputStream: BufferedOutputStream) {
+    suspend fun generate(competitionId: UUID) {
         val competition: CompetitionDto = competitionService.findById(competitionId)
             ?: throw NotFoundException("Competition with id $competitionId not found")
 
@@ -49,13 +56,23 @@ class GridService(
             }
         }
 
-        ZipOutputStream(outputStream).use { zipOut ->
-            grids.forEach { (ageCategory, grids) ->
-                val zipEntry = ZipEntry("${ageCategory.value}.xlsx")
-                zipOut.putNextEntry(zipEntry)
-                zipOut.write(templateComponent.process(grids))
-                zipOut.closeEntry()
-            }
+        withContext(Dispatchers.IO) {
+            createOutputStream(competitionId)
+                .run(::ZipOutputStream)
+                .use { zipOutput ->
+                    grids.forEach { (ageCategory, grids) ->
+                        val zipEntry = ZipEntry("${ageCategory.value}.xlsx")
+                        zipOutput.putNextEntry(zipEntry)
+                        zipOutput.write(templateComponent.process(grids))
+                        zipOutput.closeEntry()
+                    }
+                }
         }
     }
+
+    private fun createOutputStream(competitionId: UUID): FileOutputStream =
+        Path(filesConfig.output).takeIf { it.exists() }
+            ?.run { FileOutputStream("${filesConfig.output}/competition_grid_$competitionId.zip") }
+            ?: Path(filesConfig.output).createDirectory()
+                .run { FileOutputStream("${filesConfig.output}/competition_grid_$competitionId.zip") }
 }

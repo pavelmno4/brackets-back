@@ -1,14 +1,12 @@
 package ru.pkozlov.brackets.grid.routing
 
 import io.ktor.http.*
-import io.ktor.http.ContentDisposition.Companion.Attachment
-import io.ktor.http.ContentDisposition.Parameters.FileName
-import io.ktor.http.HttpHeaders.ContentDisposition
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
-import io.ktor.server.plugins.partialcontent.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import org.koin.ktor.ext.inject
 import ru.pkozlov.brackets.grid.service.GridService
 import java.util.*
@@ -18,21 +16,16 @@ fun Application.gridRoutes() {
 
     routing {
         route("/competitions/{competitionId}/grid") {
-            install(PartialContent)
-
             authenticate("auth-session") {
-                get {
+                post {
                     val competitionId: UUID = call.parameters["competitionId"]
                         ?.run(UUID::fromString)
-                        ?: run { call.respond(HttpStatusCode.BadRequest); return@get }
+                        ?: run { call.respond(HttpStatusCode.BadRequest); return@post }
 
-                    call.response.header(
-                        name = ContentDisposition,
-                        value = Attachment.withParameter(FileName, "competition_grid.zip").toString()
-                    )
-                    call.respondOutputStream(contentType = ContentType.Application.Zip) {
-                        gridService.generate(competitionId, buffered())
+                    launch(Dispatchers.IO) {
+                        gridService.generate(competitionId)
                     }
+                    call.respondText(status = HttpStatusCode.OK) { "Grid generation started for competition $competitionId" }
                 }
             }
         }

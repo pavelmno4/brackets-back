@@ -8,6 +8,7 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import ru.pkozlov.brackets.app.config.AuthConfig
 import ru.pkozlov.brackets.app.config.DatabaseConfig
+import ru.pkozlov.brackets.app.config.FilesConfig
 import ru.pkozlov.brackets.auth.di.authModule
 import ru.pkozlov.brackets.competition.di.competitionModule
 import ru.pkozlov.brackets.grid.di.gridModule
@@ -27,6 +28,12 @@ val appModule: Module = module {
     single<AuthConfig> {
         val conf = ConfigFactory.load().getConfig("ktor.authentication")
         Hocon.decodeFromConfig(serializer<AuthConfig>(), conf)
+    }
+
+    @OptIn(ExperimentalSerializationApi::class)
+    single<FilesConfig> {
+        val conf = ConfigFactory.load().getConfig("files")
+        Hocon.decodeFromConfig(serializer<FilesConfig>(), conf)
     }
 
     single<() -> LocalDateTime> { { LocalDateTime.now() } }

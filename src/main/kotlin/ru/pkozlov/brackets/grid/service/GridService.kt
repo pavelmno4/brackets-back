@@ -2,6 +2,8 @@ package ru.pkozlov.brackets.grid.service
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import ru.pkozlov.brackets.app.config.FilesConfig
 import ru.pkozlov.brackets.app.dto.AgeCategory
 import ru.pkozlov.brackets.app.dto.WeightCategory
@@ -22,6 +24,7 @@ import kotlin.io.path.Path
 import kotlin.io.path.createDirectory
 import kotlin.io.path.exists
 
+
 /**
  * Inherits code from [brackets-excel](https://github.com/pavelmno4/brackets-excel)
  * */
@@ -32,9 +35,13 @@ class GridService(
     private val templateComponent: TemplateComponent,
     private val filesConfig: FilesConfig
 ) {
+    private val logger: Logger = LoggerFactory.getLogger(GridService::class.java)
+
     suspend fun generate(competitionId: UUID) {
         val competition: CompetitionDto = competitionService.findById(competitionId)
             ?: throw NotFoundException("Competition with id $competitionId not found")
+
+        logger.info("Grid generation started...")
 
         val participants: Map<AgeCategory, Map<WeightCategory, List<ParticipantDto>>> =
             participantService
@@ -70,6 +77,8 @@ class GridService(
                 }
             }
         }
+
+        logger.info("Grid generation completed!")
     }
 
     private fun createOutputStream(competitionId: UUID): FileOutputStream =

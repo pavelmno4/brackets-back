@@ -19,3 +19,4 @@ To set up the environment and start the app:
 | DB_JDBC_URL        | text   | true     |
 | DB_PASSWORD        | text   | true     |
 | DB_USERNAME        | text   | true     |
+| OUTPUT_DIRECTORY   | text   | true     |

@@ -7,7 +7,7 @@ import ru.pkozlov.brackets.app.utils.serializer.AgeCategorySerializer
 import ru.pkozlov.brackets.app.utils.serializer.BigDecimalSerializer
 import ru.pkozlov.brackets.app.utils.serializer.UUIDSerializer
 import ru.pkozlov.brackets.app.utils.serializer.WeightCategorySerializer
-import ru.pkozlov.brackets.participant.enumeration.Gender
+import ru.pkozlov.brackets.app.enumeration.Gender
 import java.math.BigDecimal
 import java.util.*
 

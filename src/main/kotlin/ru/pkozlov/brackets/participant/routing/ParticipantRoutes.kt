@@ -9,12 +9,12 @@ import io.ktor.server.routing.*
 import org.koin.ktor.ext.inject
 import ru.pkozlov.brackets.app.dto.AgeCategory
 import ru.pkozlov.brackets.app.dto.WeightCategory
+import ru.pkozlov.brackets.app.enumeration.Gender
 import ru.pkozlov.brackets.competition.service.CompetitionService
 import ru.pkozlov.brackets.participant.dto.CreateParticipantDto
 import ru.pkozlov.brackets.participant.dto.ParticipantDto
 import ru.pkozlov.brackets.participant.dto.PatchParticipantDto
 import ru.pkozlov.brackets.participant.dto.criteria.*
-import ru.pkozlov.brackets.participant.enumeration.Gender
 import ru.pkozlov.brackets.participant.service.ParticipantService
 import java.util.*
 

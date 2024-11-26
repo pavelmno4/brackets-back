@@ -5,7 +5,7 @@ import ru.pkozlov.brackets.app.dto.AgeCategory
 import ru.pkozlov.brackets.app.dto.WeightCategory
 import ru.pkozlov.brackets.app.utils.serializer.AgeCategorySerializer
 import ru.pkozlov.brackets.app.utils.serializer.WeightCategorySerializer
-import ru.pkozlov.brackets.participant.enumeration.Gender
+import ru.pkozlov.brackets.app.enumeration.Gender
 
 @Serializable
 data class CreateParticipantDto(

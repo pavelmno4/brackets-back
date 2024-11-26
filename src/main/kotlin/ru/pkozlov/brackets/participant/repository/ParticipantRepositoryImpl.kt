@@ -38,8 +38,8 @@ class ParticipantRepositoryImpl : ParticipantRepository {
                 criteria.forEach { criteria ->
                     when (criteria) {
                         is GenderCriteria -> andWhere { ParticipantTable.gender eq criteria.value }
-                        is AgeCategoryCriteria -> andWhere { ParticipantTable.ageCategory eq criteria.value.value }
-                        is WeightCategoryCriteria -> andWhere { ParticipantTable.weightCategory eq criteria.value.value }
+                        is AgeCategoryCriteria -> andWhere { ParticipantTable.ageCategory eq criteria.value }
+                        is WeightCategoryCriteria -> andWhere { ParticipantTable.weightCategory eq criteria.value }
                         is TeamCriteria -> adjustColumnSet { innerJoin(TeamTable, { ParticipantTable.teamId }, { TeamTable.id }) }
                             .adjustSelect { select(fields + TeamTable.columns) }
                             .andWhere { TeamTable.name eq criteria.value }

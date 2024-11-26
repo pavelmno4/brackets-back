@@ -9,6 +9,7 @@ import ru.pkozlov.brackets.app.config.DatabaseConfig
 import ru.pkozlov.brackets.app.exception.SchemaValidationException
 import ru.pkozlov.brackets.auth.domain.UserTable
 import ru.pkozlov.brackets.competition.domain.CompetitionTable
+import ru.pkozlov.brackets.grid.domain.GridTable
 import ru.pkozlov.brackets.participant.domain.ParticipantTable
 import ru.pkozlov.brackets.participant.domain.TeamTable
 
@@ -26,7 +27,8 @@ fun Application.configureDatabaseMigration() {
             CompetitionTable,
             ParticipantTable,
             TeamTable,
-            UserTable
+            UserTable,
+            GridTable
         )
             .takeIf { it.isNotEmpty() }
             ?.let { statements ->

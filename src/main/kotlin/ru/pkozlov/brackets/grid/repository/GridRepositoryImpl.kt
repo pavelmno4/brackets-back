@@ -1,6 +1,8 @@
 package ru.pkozlov.brackets.grid.repository
 
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.and
+import org.jetbrains.exposed.sql.deleteWhere
 import ru.pkozlov.brackets.app.dto.AgeCategory
 import ru.pkozlov.brackets.app.dto.WeightCategory
 import ru.pkozlov.brackets.app.enumeration.Gender
@@ -42,5 +44,12 @@ class GridRepositoryImpl : GridRepository {
                 weightCategory = grid.weightCategory
                 dendrogram = grid.dendrogram
             }.asDto()
+        }
+
+    override suspend fun deleteAllWith(
+        competitionId: UUID
+    ): Int =
+        suspendTransaction {
+            GridTable.deleteWhere { GridTable.competitionId eq competitionId }
         }
 }

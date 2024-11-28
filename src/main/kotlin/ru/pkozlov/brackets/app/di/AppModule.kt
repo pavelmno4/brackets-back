@@ -10,11 +10,12 @@ import ru.pkozlov.brackets.app.config.AuthConfig
 import ru.pkozlov.brackets.app.config.DatabaseConfig
 import ru.pkozlov.brackets.auth.di.authModule
 import ru.pkozlov.brackets.competition.di.competitionModule
+import ru.pkozlov.brackets.grid.di.gridModule
 import ru.pkozlov.brackets.participant.di.participantModule
 import java.time.LocalDateTime
 
 val appModule: Module = module {
-    includes(competitionModule, participantModule, authModule)
+    includes(competitionModule, participantModule, authModule, gridModule)
 
     @OptIn(ExperimentalSerializationApi::class)
     single<DatabaseConfig> {

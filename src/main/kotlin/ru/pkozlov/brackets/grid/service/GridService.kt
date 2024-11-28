@@ -28,6 +28,7 @@ class GridService(
                 .findAllByCriteria(competitionId, setOf(GenderCriteria(Gender.MALE)))
                 .filter { participant -> participant.weight != null }
                 .groupBy { it.ageCategory to it.weightCategory }
+        gridRepository.deleteAllWith(competitionId)
 
         val grids: List<GridDto> = categories
             .map { (category, participants) ->
@@ -50,4 +51,17 @@ class GridService(
 
         return grids
     }
+
+    suspend fun findBy(
+        competitionId: UUID,
+        gender: Gender,
+        ageCategory: AgeCategory,
+        weightCategory: WeightCategory
+    ): GridDto? =
+        gridRepository.findBy(
+            competitionId = competitionId,
+            gender = gender,
+            ageCategory = ageCategory,
+            weightCategory = weightCategory
+        )
 }

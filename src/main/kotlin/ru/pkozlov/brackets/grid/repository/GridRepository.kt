@@ -16,4 +16,5 @@ interface GridRepository {
     ): GridDto?
 
     suspend fun create(grid: CreateGridDto): GridDto
+    suspend fun deleteAllWith(competitionId: UUID): Int
 }

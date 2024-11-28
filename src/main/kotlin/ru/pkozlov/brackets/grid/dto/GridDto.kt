@@ -18,7 +18,7 @@ data class GridDto(
     val ageCategory: AgeCategory,
     @Serializable(WeightCategorySerializer::class)
     val weightCategory: WeightCategory,
-    val hierarchy: Node,
+    val dendrogram: Node?,
     @Serializable(UUIDSerializer::class)
     val competitionId: UUID
 )

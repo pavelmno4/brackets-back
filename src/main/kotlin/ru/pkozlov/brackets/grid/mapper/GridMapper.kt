@@ -8,6 +8,6 @@ fun Grid.asDto(): GridDto = GridDto(
     gender = gender,
     ageCategory = ageCategory,
     weightCategory = weightCategory,
-    hierarchy = hierarchy,
+    dendrogram = dendrogram,
     competitionId = competitionId
 )

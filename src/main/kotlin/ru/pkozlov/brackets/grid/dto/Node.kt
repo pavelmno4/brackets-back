@@ -8,7 +8,7 @@ import java.util.UUID
 data class Node(
     @Serializable(UUIDSerializer::class)
     val id: UUID,
-    val participant: Participant?,
-    val left: Node?,
-    val right: Node?
+    var participant: Participant? = null,
+    val left: Node? = null,
+    val right: Node? = null
 )

@@ -8,6 +8,7 @@ import org.koin.ktor.ext.inject
 import ru.pkozlov.brackets.app.dto.AgeCategory
 import ru.pkozlov.brackets.app.dto.WeightCategory
 import ru.pkozlov.brackets.app.enumeration.Gender
+import ru.pkozlov.brackets.grid.mapper.asView
 import ru.pkozlov.brackets.grid.service.GridService
 import java.util.*
 
@@ -32,7 +33,7 @@ fun Application.gridRoutes() {
                         ?: throw IllegalStateException("Param 'weightCategory' is required")
 
                     gridService.findBy(competitionId, gender, ageCategory, weightCategory)
-                        ?.let { competition -> call.respond(competition) }
+                        ?.let { competition -> call.respond(competition.asView()) }
                         ?: call.respond(HttpStatusCode.NoContent)
 
                 } catch (exc: IllegalArgumentException) {

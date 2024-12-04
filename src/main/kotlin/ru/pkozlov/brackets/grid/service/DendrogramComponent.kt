@@ -100,7 +100,7 @@ class DendrogramComponent {
     private fun defineDendrogramSize(participantsSize: Int): Int =
         when {
             participantsSize <= 2 -> 2
-            participantsSize == 3 -> 3
+            participantsSize == 3 -> 8
             participantsSize == 4 -> 4
             participantsSize <= 8 -> 8
             participantsSize <= 16 -> 16

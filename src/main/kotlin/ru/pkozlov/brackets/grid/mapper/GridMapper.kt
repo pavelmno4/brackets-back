@@ -29,7 +29,12 @@ private fun Node.asNodesList(): List<NodeView> {
 
         val nodeView = NodeView(
             id = node.id,
-            data = NodeView.Data(node.participant?.run { "$fullName ($team)" } ?: EMPTY_STRING)
+            data = node.participant?.run {
+                NodeView.Data(
+                    participantFullName = fullName,
+                    team = team
+                )
+            }
         )
         result.add(nodeView)
 
@@ -72,5 +77,3 @@ private fun Node.asEdgeList(): List<EdgeView> {
     }
     return result
 }
-
-private const val EMPTY_STRING: String = ""

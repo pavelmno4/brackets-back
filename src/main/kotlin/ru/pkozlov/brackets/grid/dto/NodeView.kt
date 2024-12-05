@@ -8,10 +8,11 @@ import java.util.*
 data class NodeView(
     @Serializable(UUIDSerializer::class)
     val id: UUID,
-    val data: Data
+    val data: Data?
 ) {
     @Serializable
     data class Data(
-        val label: String
+        val participantFullName: String,
+        val team: String
     )
 }

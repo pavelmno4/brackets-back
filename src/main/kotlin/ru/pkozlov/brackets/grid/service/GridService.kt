@@ -6,8 +6,11 @@ import org.slf4j.LoggerFactory
 import ru.pkozlov.brackets.app.dto.AgeCategory
 import ru.pkozlov.brackets.app.dto.WeightCategory
 import ru.pkozlov.brackets.app.enumeration.Gender
+import ru.pkozlov.brackets.app.utils.bfs
 import ru.pkozlov.brackets.grid.dto.CreateGridDto
 import ru.pkozlov.brackets.grid.dto.GridDto
+import ru.pkozlov.brackets.grid.dto.Node
+import ru.pkozlov.brackets.grid.dto.Participant
 import ru.pkozlov.brackets.grid.repository.GridRepository
 import ru.pkozlov.brackets.participant.dto.ParticipantDto
 import ru.pkozlov.brackets.participant.dto.criteria.GenderCriteria
@@ -51,6 +54,25 @@ class GridService(
 
         return grids
     }
+
+    suspend fun setWinnerForNode(gridId: UUID, nodeId: UUID, winnerNodeId: UUID): GridDto? =
+        gridRepository.update(gridId) { grid ->
+            val root = grid.dendrogram
+            grid.dendrogram = null // for update link in the future
+
+            val targetNode: Node? = root
+                ?.bfs { result, node -> if (node.id == nodeId) result.add(node) }
+                ?.firstOrNull()
+
+            val winner: Participant? = root
+                ?.bfs { result, node -> if (node.id == winnerNodeId) result.add(node.participant) }
+                ?.firstOrNull()
+
+            targetNode?.apply {
+                participant = winner
+            }
+            grid.dendrogram = root
+        }
 
     suspend fun findBy(
         competitionId: UUID,

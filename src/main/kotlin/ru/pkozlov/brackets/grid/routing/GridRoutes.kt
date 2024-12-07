@@ -2,12 +2,15 @@ package ru.pkozlov.brackets.grid.routing
 
 import io.ktor.http.*
 import io.ktor.server.application.*
+import io.ktor.server.auth.*
+import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import org.koin.ktor.ext.inject
 import ru.pkozlov.brackets.app.dto.AgeCategory
 import ru.pkozlov.brackets.app.dto.WeightCategory
 import ru.pkozlov.brackets.app.enumeration.Gender
+import ru.pkozlov.brackets.grid.dto.PatchNodeWinnerDto
 import ru.pkozlov.brackets.grid.mapper.asView
 import ru.pkozlov.brackets.grid.service.GridService
 import java.util.*
@@ -41,13 +44,39 @@ fun Application.gridRoutes() {
                 }
             }
 
-            post {
-                val competitionId: UUID = call.parameters["competitionId"]
-                    ?.run(UUID::fromString)
-                    ?: run { call.respond(HttpStatusCode.BadRequest); return@post }
+            authenticate("auth-session") {
+                post {
+                    val competitionId: UUID = call.parameters["competitionId"]
+                        ?.run(UUID::fromString)
+                        ?: run { call.respond(HttpStatusCode.BadRequest); return@post }
 
-                gridService.generate(competitionId)
-                    .let { grids -> call.respond(grids) }
+                    gridService.generate(competitionId)
+                        .let { grids -> call.respond(grids) }
+                }
+            }
+
+            authenticate("auth-session") {
+                patch("/{gridId}/nodes/{nodeId}/winner") {
+                    val gridId: UUID = call.parameters["gridId"]
+                        ?.run(UUID::fromString)
+                        ?: run { call.respond(HttpStatusCode.BadRequest); return@patch }
+
+                    val nodeId: UUID = call.parameters["nodeId"]
+                        ?.run(UUID::fromString)
+                        ?: run { call.respond(HttpStatusCode.BadRequest); return@patch }
+
+                    val winnerNodeId: UUID = call.receive<PatchNodeWinnerDto>().winnerNodeId
+
+                    gridService.setWinnerForNode(gridId, nodeId, winnerNodeId)
+                        ?.let { updatedGrid -> call.respond(updatedGrid) }
+                        ?: call.respond(HttpStatusCode.NoContent)
+                }
+            }
+
+            authenticate("auth-session") {
+                patch("/{gridId}/nodes/{nodeId}/participant") {
+                    call.respond(HttpStatusCode.OK)
+                }
             }
         }
     }

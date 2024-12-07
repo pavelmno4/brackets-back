@@ -46,6 +46,14 @@ class GridRepositoryImpl : GridRepository {
             }.asDto()
         }
 
+    override suspend fun update(
+        id: UUID,
+        action: (it: Grid) -> Unit
+    ): GridDto? =
+        suspendTransaction {
+            Grid.findByIdAndUpdate(id, action)?.asDto()
+        }
+
     override suspend fun deleteAllWith(
         competitionId: UUID
     ): Int =

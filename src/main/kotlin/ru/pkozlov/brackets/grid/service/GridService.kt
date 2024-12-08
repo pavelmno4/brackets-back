@@ -57,21 +57,22 @@ class GridService(
 
     suspend fun setWinnerForNode(gridId: UUID, nodeId: UUID, winnerNodeId: UUID): GridDto? =
         gridRepository.update(gridId) { grid ->
-            val root = grid.dendrogram
-            grid.dendrogram = null // for update link in the future
+            val updatedDendrogram = grid.dendrogram.map { root ->
+                val targetNode: Node? = root
+                    .bfs { result, node -> if (node.id == nodeId) result.add(node) }
+                    .firstOrNull()
 
-            val targetNode: Node? = root
-                ?.bfs { result, node -> if (node.id == nodeId) result.add(node) }
-                ?.firstOrNull()
+                val winner: Participant? = root
+                    .bfs { result, node -> if (node.id == winnerNodeId) result.add(node.participant) }
+                    .firstOrNull()
 
-            val winner: Participant? = root
-                ?.bfs { result, node -> if (node.id == winnerNodeId) result.add(node.participant) }
-                ?.firstOrNull()
-
-            targetNode?.apply {
-                participant = winner
+                targetNode?.apply {
+                    participant = winner
+                }
+                root
             }
-            grid.dendrogram = root
+            grid.dendrogram = emptyList()           // for update object link
+            grid.dendrogram = updatedDendrogram
         }
 
     suspend fun findBy(

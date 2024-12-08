@@ -23,7 +23,7 @@ object GridTable : UUIDTable("grid") {
     val weightCategory: Column<WeightCategory> = varchar("weight_category", 255)
         .transform({ WeightCategory(it) }, { it.value })
         .index("grid_weight_category_idx")
-    val dendrogram: Column<Node?> = jsonb<Node>("dendrogram", json).nullable()
+    val dendrogram: Column<List<Node>> = jsonb<List<Node>>("dendrogram", json)
     val competitionId: Column<UUID> = uuid("competition_id")
         .references(
             ref = CompetitionTable.id,
@@ -38,6 +38,6 @@ class Grid(id: EntityID<UUID>) : UUIDEntity(id) {
     var gender: Gender by GridTable.gender
     var ageCategory: AgeCategory by GridTable.ageCategory
     var weightCategory: WeightCategory by GridTable.weightCategory
-    var dendrogram: Node? by GridTable.dendrogram
+    var dendrogram: List<Node> by GridTable.dendrogram
     var competitionId: UUID by GridTable.competitionId
 }

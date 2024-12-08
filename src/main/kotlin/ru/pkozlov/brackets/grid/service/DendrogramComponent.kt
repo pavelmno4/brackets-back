@@ -8,18 +8,18 @@ import java.util.*
 import kotlin.math.log2
 
 class DendrogramComponent {
-    fun createAndFill(participants: List<ParticipantDto>): Node? {
-        if (participants.isEmpty()) return null
+    fun createAndFill(participants: List<ParticipantDto>): List<Node> {
+        if (participants.isEmpty()) return emptyList()
 
         val dendrogramSize: Int = defineDendrogramSize(participants.size)
         val penultimateLevelCapacity: Int = dendrogramSize - participants.size
         val (dendrogram, flatDendrogram) = createGraph(dendrogramSize)
 
-        when (participants.size) {
-            3 -> fillByCircleSystem(flatDendrogram, participants)
-            else -> fillByOlympicSystem(flatDendrogram, penultimateLevelCapacity, participants)
+        return when (participants.size) {
+            3 -> fillByCircleSystem(participants)
+            else ->
+                fillByOlympicSystem(flatDendrogram, penultimateLevelCapacity, participants).run { listOf(dendrogram) }
         }
-        return dendrogram
     }
 
     private fun fillByOlympicSystem(
@@ -30,7 +30,7 @@ class DendrogramComponent {
         val teams: Queue<Queue<ParticipantDto>> =
             participants
                 .groupBy { it.team }
-                .map { (_, teams) -> teams.shuffled().toQueue() }
+                .map { (_, participantsOfOneTeam) -> participantsOfOneTeam.shuffled().toQueue() }
                 .sortedByDescending { it.size }
                 .toQueue()
 
@@ -41,21 +41,33 @@ class DendrogramComponent {
     }
 
     private fun fillByCircleSystem(
-        flatGraph: NavigableMap<Int, Queue<Node>>,
         participants: Collection<ParticipantDto>
-    ) {
-        val lastLevel: Queue<Node> = flatGraph.lastEntry().value
+    ): List<Node> {
         val participantsQueue: Queue<ParticipantDto> = participants.toQueue()
-
-        repeat(6) {
-            lastLevel.poll().apply {
-                val iteratingParticipant = participantsQueue.poll()
-                participant = Participant(
-                    fullName = iteratingParticipant.fullName,
-                    team = iteratingParticipant.team
-                )
-                participantsQueue.add(iteratingParticipant)
+        val result: List<Node> = buildList {
+            repeat(3) {
+                Node(
+                    id = UUID.randomUUID(),
+                    right = Node(id = UUID.randomUUID()),
+                    left = Node(id = UUID.randomUUID())
+                ).run(::add)
             }
+        }
+
+        return result.onEach { node ->
+            val leftIteratingParticipant = participantsQueue.poll()
+            node.left?.participant = Participant(
+                fullName = leftIteratingParticipant.fullName,
+                team = leftIteratingParticipant.team
+            )
+            participantsQueue.add(leftIteratingParticipant)
+
+            val rightIteratingParticipant = participantsQueue.poll()
+            node.right?.participant = Participant(
+                fullName = rightIteratingParticipant.fullName,
+                team = rightIteratingParticipant.team
+            )
+            participantsQueue.add(rightIteratingParticipant)
         }
     }
 

@@ -3,7 +3,7 @@ create table if not exists grid (
     gender varchar(6) not null,
     age_category varchar(255) not null,
     weight_category varchar(255) not null,
-    dendrogram jsonb,
+    dendrogram jsonb not null,
     competition_id uuid not null,
      primary key (id)
 );

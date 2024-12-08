@@ -15,8 +15,8 @@ fun Grid.asDto(): GridDto = GridDto(
 
 fun GridDto.asView(): GridView = GridView(
     id = id,
-    nodes = dendrogram?.asNodesList() ?: emptyList(),
-    edges = dendrogram?.asEdgeList() ?: emptyList()
+    nodes = dendrogram.flatMap { it.asNodesList() },
+    edges = dendrogram.flatMap { it.asEdgeList() }
 )
 
 private fun Node.asNodesList(): List<NodeView> =

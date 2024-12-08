@@ -10,5 +10,5 @@ data class CreateGridDto(
     val gender: Gender,
     val ageCategory: AgeCategory,
     val weightCategory: WeightCategory,
-    val dendrogram: Node?
+    val dendrogram: List<Node>
 )

@@ -7,10 +7,7 @@ import ru.pkozlov.brackets.app.dto.AgeCategory
 import ru.pkozlov.brackets.app.dto.WeightCategory
 import ru.pkozlov.brackets.app.enumeration.Gender
 import ru.pkozlov.brackets.app.utils.bfs
-import ru.pkozlov.brackets.grid.dto.CreateGridDto
-import ru.pkozlov.brackets.grid.dto.GridDto
-import ru.pkozlov.brackets.grid.dto.Node
-import ru.pkozlov.brackets.grid.dto.Participant
+import ru.pkozlov.brackets.grid.dto.*
 import ru.pkozlov.brackets.grid.repository.GridRepository
 import ru.pkozlov.brackets.participant.dto.ParticipantDto
 import ru.pkozlov.brackets.participant.dto.criteria.GenderCriteria
@@ -73,6 +70,13 @@ class GridService(
             }
             grid.dendrogram = emptyList()           // for update object link
             grid.dendrogram = updatedDendrogram
+        }
+
+    suspend fun patchMedalists(gridId: UUID, patchMedalists: PatchGridMedalistsDto): GridDto? =
+        gridRepository.update(gridId) { grid ->
+            grid.firstPlaceParticipantId = patchMedalists.firstPlaceParticipantId
+            grid.secondPlaceParticipantId = patchMedalists.secondPlaceParticipantId
+            grid.thirdPlaceParticipantId = patchMedalists.thirdPlaceParticipantId
         }
 
     suspend fun findBy(

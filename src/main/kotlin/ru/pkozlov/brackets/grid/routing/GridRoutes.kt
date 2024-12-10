@@ -10,6 +10,7 @@ import org.koin.ktor.ext.inject
 import ru.pkozlov.brackets.app.dto.AgeCategory
 import ru.pkozlov.brackets.app.dto.WeightCategory
 import ru.pkozlov.brackets.app.enumeration.Gender
+import ru.pkozlov.brackets.grid.dto.PatchGridMedalistsDto
 import ru.pkozlov.brackets.grid.dto.PatchNodeWinnerDto
 import ru.pkozlov.brackets.grid.mapper.asView
 import ru.pkozlov.brackets.grid.service.GridService
@@ -52,6 +53,20 @@ fun Application.gridRoutes() {
 
                     gridService.generate(competitionId)
                         .let { grids -> call.respond(grids) }
+                }
+            }
+
+            authenticate("auth-session") {
+                patch("/{gridId}/medalists") {
+                    val gridId: UUID = call.parameters["gridId"]
+                        ?.run(UUID::fromString)
+                        ?: run { call.respond(HttpStatusCode.BadRequest); return@patch }
+
+                    val patchMedalistsDto: PatchGridMedalistsDto = call.receive<PatchGridMedalistsDto>()
+
+                    gridService.patchMedalists(gridId, patchMedalistsDto)
+                        ?.let { updatedGrid -> call.respond(updatedGrid) }
+                        ?: call.respond(HttpStatusCode.NoContent)
                 }
             }
 

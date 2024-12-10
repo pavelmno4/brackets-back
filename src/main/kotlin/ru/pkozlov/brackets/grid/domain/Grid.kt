@@ -12,6 +12,7 @@ import ru.pkozlov.brackets.app.enumeration.Gender
 import ru.pkozlov.brackets.app.utils.json
 import ru.pkozlov.brackets.competition.domain.CompetitionTable
 import ru.pkozlov.brackets.grid.dto.Node
+import ru.pkozlov.brackets.participant.domain.ParticipantTable
 import java.util.*
 
 object GridTable : UUIDTable("grid") {
@@ -30,6 +31,24 @@ object GridTable : UUIDTable("grid") {
             fkName = "grid_competition_id_fk"
         )
         .index("grid_competition_id_idx")
+    val firstPlaceParticipantId: Column<UUID?> = uuid("first_place_participant_id")
+        .references(
+            ref = ParticipantTable.id,
+            fkName = "grid_first_place_participant_id_fk"
+        )
+        .nullable()
+    val secondPlaceParticipantId: Column<UUID?> = uuid("second_place_participant_id")
+        .references(
+            ref = ParticipantTable.id,
+            fkName = "grid_second_place_participant_id_fk"
+        )
+        .nullable()
+    val thirdPlaceParticipantId: Column<UUID?> = uuid("third_place_participant_id")
+        .references(
+            ref = ParticipantTable.id,
+            fkName = "grid_third_place_participant_id_fk"
+        )
+        .nullable()
 }
 
 class Grid(id: EntityID<UUID>) : UUIDEntity(id) {
@@ -40,4 +59,7 @@ class Grid(id: EntityID<UUID>) : UUIDEntity(id) {
     var weightCategory: WeightCategory by GridTable.weightCategory
     var dendrogram: List<Node> by GridTable.dendrogram
     var competitionId: UUID by GridTable.competitionId
+    var firstPlaceParticipantId: UUID? by GridTable.firstPlaceParticipantId
+    var secondPlaceParticipantId: UUID? by GridTable.secondPlaceParticipantId
+    var thirdPlaceParticipantId: UUID? by GridTable.thirdPlaceParticipantId
 }

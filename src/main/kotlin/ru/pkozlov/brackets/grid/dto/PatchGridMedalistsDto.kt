@@ -5,11 +5,7 @@ import ru.pkozlov.brackets.app.utils.serializer.UUIDSerializer
 import java.util.*
 
 @Serializable
-data class GridView(
-    @Serializable(UUIDSerializer::class)
-    val id: UUID,
-    val nodes: List<NodeView>,
-    val edges: List<EdgeView>,
+data class PatchGridMedalistsDto(
     @Serializable(UUIDSerializer::class)
     val firstPlaceParticipantId: UUID?,
     @Serializable(UUIDSerializer::class)

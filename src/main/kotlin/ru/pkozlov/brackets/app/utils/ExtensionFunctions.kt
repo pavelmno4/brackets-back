@@ -3,7 +3,7 @@ package ru.pkozlov.brackets.app.utils
 import ru.pkozlov.brackets.grid.dto.Node
 import java.util.*
 
-fun <T> Collection<T>.toQueue(): Queue<T> = LinkedList(this)
+fun <T> Collection<T>.toDeque(): Deque<T> = LinkedList(this)
 
 fun <T> Node.bfs(operation: (result: MutableList<T>, node: Node) -> Unit): List<T> {
     val result: MutableList<T> = mutableListOf()

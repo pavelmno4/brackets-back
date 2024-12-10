@@ -1,6 +1,6 @@
 package ru.pkozlov.brackets.grid.service
 
-import ru.pkozlov.brackets.app.utils.toQueue
+import ru.pkozlov.brackets.app.utils.toDeque
 import ru.pkozlov.brackets.grid.dto.Node
 import ru.pkozlov.brackets.grid.dto.Participant
 import ru.pkozlov.brackets.participant.dto.ParticipantDto
@@ -23,18 +23,18 @@ object DendrogramComponent {
     }
 
     private fun fillByOlympicSystem(
-        flatGraph: NavigableMap<Int, Queue<Node>>,
+        flatGraph: NavigableMap<Int, Deque<Node>>,
         penultimateLevelCapacity: Int,
         participants: Collection<ParticipantDto>
     ) {
         val teams: Queue<Queue<ParticipantDto>> =
             participants
                 .groupBy { it.team }
-                .map { (_, participantsOfOneTeam) -> participantsOfOneTeam.shuffled().toQueue() }
+                .map { (_, participantsOfOneTeam) -> participantsOfOneTeam.shuffled().toDeque() }
                 .sortedByDescending { it.size }
-                .toQueue()
+                .toDeque()
 
-        val preLastLevel: Queue<Node> = flatGraph.run { getOrElse(lastKey() - 1) { LinkedList() } }
+        val preLastLevel: Deque<Node> = flatGraph.run { getOrElse(lastKey() - 1) { LinkedList() } }
 
         processPreLastLevel(penultimateLevelCapacity, preLastLevel, teams)
         processLastLevel(preLastLevel, teams)
@@ -43,7 +43,7 @@ object DendrogramComponent {
     private fun fillByCircleSystem(
         participants: Collection<ParticipantDto>
     ): List<Node> {
-        val participantsQueue: Queue<ParticipantDto> = participants.toQueue()
+        val participantsQueue: Queue<ParticipantDto> = participants.toDeque()
         val result: List<Node> = buildList {
             repeat(3) {
                 Node(
@@ -57,6 +57,7 @@ object DendrogramComponent {
         return result.onEach { node ->
             val leftIteratingParticipant = participantsQueue.poll()
             node.left?.participant = Participant(
+                id = leftIteratingParticipant.id,
                 fullName = leftIteratingParticipant.fullName,
                 team = leftIteratingParticipant.team
             )
@@ -64,6 +65,7 @@ object DendrogramComponent {
 
             val rightIteratingParticipant = participantsQueue.poll()
             node.right?.participant = Participant(
+                id = rightIteratingParticipant.id,
                 fullName = rightIteratingParticipant.fullName,
                 team = rightIteratingParticipant.team
             )
@@ -73,13 +75,14 @@ object DendrogramComponent {
 
     private fun processPreLastLevel(
         penultimateLevelCapacity: Int,
-        penultimateLevel: Queue<Node>,
+        penultimateLevel: Deque<Node>,
         teams: Queue<Queue<ParticipantDto>>
     ) {
         repeat(penultimateLevelCapacity) {
             val iteratingParticipant = teams.pollAndAddToTail()
-            penultimateLevel.poll().apply {
+            penultimateLevel.pollLast().apply {
                 participant = Participant(
+                    id = iteratingParticipant.id,
                     fullName = iteratingParticipant.fullName,
                     team = iteratingParticipant.team
                 )
@@ -88,19 +91,21 @@ object DendrogramComponent {
     }
 
     private fun processLastLevel(
-        preLastLevel: Queue<Node>,
+        preLastLevel: Deque<Node>,
         teams: Queue<Queue<ParticipantDto>>
     ) {
         while (preLastLevel.isNotEmpty()) {
-            preLastLevel.poll().apply {
+            preLastLevel.pollLast().apply {
                 left?.participant = teams.pollAndAddToTail().run {
                     Participant(
+                        id = id,
                         fullName = fullName,
                         team = team
                     )
                 }
                 right?.participant = teams.pollAndAddToTail().run {
                     Participant(
+                        id = id,
                         fullName = fullName,
                         team = team
                     )
@@ -120,14 +125,14 @@ object DendrogramComponent {
             else -> throw IllegalArgumentException("Count of participants is $participantsSize. Max is 32.")
         }
 
-    private fun createGraph(dendrogramSize: Int): Pair<Node, NavigableMap<Int, Queue<Node>>> {
-        val flatGraph: NavigableMap<Int, Queue<Node>> = TreeMap()
+    private fun createGraph(dendrogramSize: Int): Pair<Node, NavigableMap<Int, Deque<Node>>> {
+        val flatGraph: NavigableMap<Int, Deque<Node>> = TreeMap()
         val lastLevel: Int = log2(dendrogramSize.toDouble()).toInt()
         val graph: Node = createNode(currentLevel = 0, lastLevel = lastLevel, accumulator = flatGraph)
         return graph to flatGraph
     }
 
-    private fun createNode(currentLevel: Int, lastLevel: Int, accumulator: MutableMap<Int, Queue<Node>>): Node =
+    private fun createNode(currentLevel: Int, lastLevel: Int, accumulator: MutableMap<Int, Deque<Node>>): Node =
         if (currentLevel == lastLevel)
             Node(id = UUID.randomUUID()).also { node -> accumulator.getOrPut(currentLevel) { LinkedList() }.add(node) }
         else Node(

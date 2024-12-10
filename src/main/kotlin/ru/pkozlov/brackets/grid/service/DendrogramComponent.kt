@@ -7,7 +7,7 @@ import ru.pkozlov.brackets.participant.dto.ParticipantDto
 import java.util.*
 import kotlin.math.log2
 
-class DendrogramComponent {
+object DendrogramComponent {
     fun createAndFill(participants: List<ParticipantDto>): List<Node> {
         if (participants.isEmpty()) return emptyList()
 

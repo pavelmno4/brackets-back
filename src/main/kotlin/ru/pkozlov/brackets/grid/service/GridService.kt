@@ -19,13 +19,13 @@ import java.util.*
 
 class GridService(
     private val gridRepository: GridRepository,
-    private val participantService: ParticipantService,
-    private val dendrogramComponent: DendrogramComponent
+    private val participantService: ParticipantService
 ) {
     private val logger: Logger = LoggerFactory.getLogger(GridService::class.java)
 
     suspend fun generate(competitionId: UUID): List<GridDto> {
-        val generationScope = CoroutineScope(Dispatchers.Default)
+        val generationScope = CoroutineScope(Dispatchers.Default + SupervisorJob())
+
         val categories: Map<Pair<AgeCategory, WeightCategory>, List<ParticipantDto>> =
             participantService
                 .findAllByCriteria(competitionId, setOf(GenderCriteria(Gender.MALE)))
@@ -43,7 +43,7 @@ class GridService(
                         gender = Gender.MALE,
                         ageCategory = ageCategory,
                         weightCategory = weightCategory,
-                        dendrogram = dendrogramComponent.createAndFill(participants)
+                        dendrogram = DendrogramComponent.createAndFill(participants)
                     )
                         .let { grid -> gridRepository.create(grid) }
                         .also { logger.info("$ageCategory $weightCategory grid created") }

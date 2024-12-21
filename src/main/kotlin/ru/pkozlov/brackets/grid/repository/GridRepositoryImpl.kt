@@ -9,7 +9,6 @@ import ru.pkozlov.brackets.app.enumeration.Gender
 import ru.pkozlov.brackets.app.utils.suspendTransaction
 import ru.pkozlov.brackets.grid.domain.Grid
 import ru.pkozlov.brackets.grid.domain.GridTable
-import ru.pkozlov.brackets.grid.dto.CreateGridDto
 import ru.pkozlov.brackets.grid.dto.GridDto
 import ru.pkozlov.brackets.grid.mapper.asDto
 import java.util.*
@@ -29,21 +28,15 @@ class GridRepositoryImpl : GridRepository {
                             (GridTable.ageCategory eq ageCategory) and
                             (GridTable.weightCategory eq weightCategory)
                 }
-                .map(Grid::asDto)
                 .singleOrNull()
+                ?.asDto()
         }
 
     override suspend fun create(
-        grid: CreateGridDto
+        init: Grid.() -> Unit
     ): GridDto =
         suspendTransaction {
-            Grid.new {
-                competitionId = grid.competitionId
-                gender = grid.gender
-                ageCategory = grid.ageCategory
-                weightCategory = grid.weightCategory
-                dendrogram = grid.dendrogram
-            }.asDto()
+            Grid.new(init).asDto()
         }
 
     override suspend fun update(

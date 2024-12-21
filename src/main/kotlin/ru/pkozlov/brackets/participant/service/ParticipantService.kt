@@ -9,18 +9,38 @@ import ru.pkozlov.brackets.participant.repository.ParticipantRepository
 import java.util.*
 
 class ParticipantService(
-    private val participantRepository: ParticipantRepository
+    private val participantRepository: ParticipantRepository,
+    private val teamComponent: TeamComponent
 ) {
     suspend fun create(competitionId: UUID, participant: CreateParticipantDto): ParticipantDto =
         try {
-            participantRepository.create(competitionId, participant)
+            val newOrExistingTeam = teamComponent.findOrCreateTeam(participant.team)
+            participantRepository.create {
+                fullName = participant.fullName
+                birthDate = participant.birthDate
+                gender = participant.gender
+                ageCategory = participant.ageCategory
+                weightCategory = participant.weightCategory
+                team = newOrExistingTeam
+                this.competitionId = competitionId
+            }
         } catch (exc: ExposedSQLException) {
             throw IllegalArgumentException(exc)
         }
 
     suspend fun update(id: UUID, updatedParticipant: PatchParticipantDto): ParticipantDto? =
         try {
-            participantRepository.update(id, updatedParticipant)
+            val newOrExistingTeam =
+                updatedParticipant.team?.run { teamComponent.findOrCreateTeam(updatedParticipant.team) }
+            participantRepository.update(id) { participant ->
+                if (updatedParticipant.fullName != null) participant.fullName = updatedParticipant.fullName
+                if (updatedParticipant.birthDate != null) participant.birthDate = updatedParticipant.birthDate
+                if (updatedParticipant.gender != null) participant.gender = updatedParticipant.gender
+                if (updatedParticipant.ageCategory != null) participant.ageCategory = updatedParticipant.ageCategory
+                if (updatedParticipant.weightCategory != null) participant.weightCategory = updatedParticipant.weightCategory
+                if (updatedParticipant.weight != null) participant.weight = updatedParticipant.weight
+                if (newOrExistingTeam != null) participant.team = newOrExistingTeam
+            }
         } catch (exc: ExposedSQLException) {
             throw IllegalArgumentException(exc)
         }

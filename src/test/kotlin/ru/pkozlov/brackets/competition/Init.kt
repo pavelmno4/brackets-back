@@ -17,8 +17,8 @@ import java.time.LocalDateTime
 fun KoinApplication.initKoinModules() {
     modules(
         module {
-            single<CompetitionRepository> { FakeRepository(get()) }
-            single<CompetitionService> { CompetitionService(get()) }
+            single<CompetitionRepository> { FakeCompetitionRepository() }
+            single<CompetitionService> { CompetitionService(get(), get()) }
             single<AuthConfig> { AuthConfig(signKey = "5848aeb496a92c233038e439cb5f91c2") }
             single<() -> LocalDateTime> { { LocalDateTime.now() } }
         }

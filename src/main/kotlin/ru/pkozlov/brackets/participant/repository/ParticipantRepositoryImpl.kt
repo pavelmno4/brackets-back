@@ -9,11 +9,8 @@ import org.jetbrains.exposed.sql.selectAll
 import ru.pkozlov.brackets.app.utils.suspendTransaction
 import ru.pkozlov.brackets.participant.domain.Participant
 import ru.pkozlov.brackets.participant.domain.ParticipantTable
-import ru.pkozlov.brackets.participant.domain.Team
 import ru.pkozlov.brackets.participant.domain.TeamTable
-import ru.pkozlov.brackets.participant.dto.CreateParticipantDto
 import ru.pkozlov.brackets.participant.dto.ParticipantDto
-import ru.pkozlov.brackets.participant.dto.PatchParticipantDto
 import ru.pkozlov.brackets.participant.dto.criteria.*
 import ru.pkozlov.brackets.participant.mapper.asDto
 import java.util.*
@@ -58,40 +55,18 @@ class ParticipantRepositoryImpl : ParticipantRepository {
                 ?.asDto()
         }
 
-    override suspend fun create(competitionId: UUID, participant: CreateParticipantDto): ParticipantDto =
+    override suspend fun create(init: Participant.() -> Unit): ParticipantDto =
         suspendTransaction {
-            Participant.new {
-                fullName = participant.fullName
-                birthDate = participant.birthDate
-                gender = participant.gender
-                ageCategory = participant.ageCategory
-                weightCategory = participant.weightCategory
-                team = findOrCreateTeam(participant.team)
-                this.competitionId = competitionId
-            }.asDto()
+            Participant.new(init).asDto()
         }
 
-    override suspend fun update(id: UUID, updatedParticipant: PatchParticipantDto): ParticipantDto? =
+    override suspend fun update(id: UUID, action: (Participant) -> Unit): ParticipantDto? =
         suspendTransaction {
-            Participant.findByIdAndUpdate(id) { participant ->
-                if (updatedParticipant.fullName != null) participant.fullName = updatedParticipant.fullName
-                if (updatedParticipant.birthDate != null) participant.birthDate = updatedParticipant.birthDate
-                if (updatedParticipant.gender != null) participant.gender = updatedParticipant.gender
-                if (updatedParticipant.ageCategory != null) participant.ageCategory = updatedParticipant.ageCategory
-                if (updatedParticipant.weightCategory != null) participant.weightCategory = updatedParticipant.weightCategory
-                if (updatedParticipant.weight != null) participant.weight = updatedParticipant.weight
-                if (updatedParticipant.team != null) participant.team = findOrCreateTeam(updatedParticipant.team)
-            }?.load(Participant::team)?.asDto()
+            Participant.findByIdAndUpdate(id, action)?.load(Participant::team)?.asDto()
         }
 
     override suspend fun delete(id: UUID): Unit? =
         suspendTransaction {
             Participant.findById(id)?.delete()
         }
-
-    private fun findOrCreateTeam(teamName: String): Team =
-        Team.find { TeamTable.name eq teamName }.singleOrNull()
-            ?: Team.new {
-                name = teamName
-            }
 }

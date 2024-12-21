@@ -11,20 +11,41 @@ class CompetitionService(
     private val now: () -> LocalDateTime
 ) {
     suspend fun create(competition: PersistCompetitionDto): CompetitionDto =
-        competitionRepository.create(competition)
+        competitionRepository.create {
+            title = competition.title
+            startDate = competition.startDate
+            endDate = competition.endDate
+            address = competition.address
+            imagePath = competition.imagePath
+            categories = competition.categories
+            deleted = false
+            createdAt = now()
+            updatedAt = now()
+        }
 
     suspend fun update(id: UUID, updatedCompetition: PersistCompetitionDto): CompetitionDto? =
-        competitionRepository.update(id, updatedCompetition)
+        competitionRepository.update(id) { competition ->
+            competition.title = updatedCompetition.title
+            competition.startDate = updatedCompetition.startDate
+            competition.endDate = updatedCompetition.endDate
+            competition.address = updatedCompetition.address
+            competition.imagePath = updatedCompetition.imagePath
+            competition.categories = updatedCompetition.categories
+            competition.updatedAt = now()
+        }
 
     suspend fun delete(id: UUID): CompetitionDto? =
-        competitionRepository.delete(id)
+        competitionRepository.update(id) { competition ->
+            competition.deleted = true
+            competition.updatedAt = now()
+        }
 
     suspend fun findUpcoming(): List<CompetitionDto> =
-        competitionRepository.findUpcoming()
+        competitionRepository.findWhereEndDateGreaterOrEq(now().toLocalDate())
             .sortedByDescending { competition -> competition.endDate }
 
     suspend fun findPast(): List<CompetitionDto> =
-        competitionRepository.findPast()
+        competitionRepository.findWhereEndDateLess(now().toLocalDate())
             .sortedByDescending { competition -> competition.endDate }
 
     suspend fun findById(id: UUID): CompetitionDto? =

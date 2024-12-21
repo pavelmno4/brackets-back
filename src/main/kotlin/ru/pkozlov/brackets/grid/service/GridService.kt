@@ -7,7 +7,10 @@ import ru.pkozlov.brackets.app.dto.AgeCategory
 import ru.pkozlov.brackets.app.dto.WeightCategory
 import ru.pkozlov.brackets.app.enumeration.Gender
 import ru.pkozlov.brackets.app.utils.bfs
-import ru.pkozlov.brackets.grid.dto.*
+import ru.pkozlov.brackets.grid.dto.GridDto
+import ru.pkozlov.brackets.grid.dto.Node
+import ru.pkozlov.brackets.grid.dto.Participant
+import ru.pkozlov.brackets.grid.dto.PatchGridMedalistsDto
 import ru.pkozlov.brackets.grid.repository.GridRepository
 import ru.pkozlov.brackets.participant.dto.ParticipantDto
 import ru.pkozlov.brackets.participant.dto.criteria.GenderCriteria
@@ -35,15 +38,13 @@ class GridService(
                 generationScope.async {
                     val (ageCategory, weightCategory) = category
 
-                    CreateGridDto(
-                        competitionId = competitionId,
-                        gender = Gender.MALE,
-                        ageCategory = ageCategory,
-                        weightCategory = weightCategory,
-                        dendrogram = DendrogramComponent.createAndFill(participants)
-                    )
-                        .let { grid -> gridRepository.create(grid) }
-                        .also { logger.info("$ageCategory $weightCategory grid created") }
+                    gridRepository.create {
+                        this.competitionId = competitionId
+                        this.gender = Gender.MALE
+                        this.ageCategory = ageCategory
+                        this.weightCategory = weightCategory
+                        this.dendrogram = DendrogramComponent.createAndFill(participants)
+                    }.also { logger.info("$ageCategory $weightCategory grid created") }
                 }
             }
             .awaitAll()

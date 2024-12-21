@@ -14,6 +14,7 @@ import org.koin.test.mock.MockProviderRule
 import org.koin.test.mock.declareMock
 import ru.pkozlov.brackets.app.dto.AgeCategory
 import ru.pkozlov.brackets.app.dto.WeightCategory
+import ru.pkozlov.brackets.competition.dto.category.CategoriesByGender
 import ru.pkozlov.brackets.competition.dto.category.Category
 import ru.pkozlov.brackets.competition.dto.competition.CompetitionDto
 import ru.pkozlov.brackets.competition.dto.competition.PersistCompetitionDto
@@ -118,11 +119,14 @@ class CompetitionTest : KoinTest {
                     endDate = LocalDate.parse("2024-10-05"),
                     address = "Московская обл., п. Большевик",
                     imagePath = "/image",
-                    categories = listOf(
-                        Category(
-                            yearRange = AgeCategory("2014-2013"),
-                            weights = setOf(WeightCategory("36"), WeightCategory("40"))
-                        )
+                    categories = CategoriesByGender(
+                        male = listOf(
+                            Category(
+                                yearRange = AgeCategory("2014-2013"),
+                                weights = setOf(WeightCategory("36"), WeightCategory("40"))
+                            )
+                        ),
+                        female = emptyList()
                     )
                 )
             )
@@ -155,13 +159,17 @@ class CompetitionTest : KoinTest {
                     endDate = LocalDate.parse("2024-10-05"),
                     address = "Московская обл., п. Большевик",
                     imagePath = "/image",
-                    categories = listOf(
-                        Category(
-                            yearRange = AgeCategory("2014-2013"),
-                            weights = setOf(WeightCategory("36"), WeightCategory("40"))
-                        )
+                    categories = CategoriesByGender(
+                        male = listOf(
+                            Category(
+                                yearRange = AgeCategory("2014-2013"),
+                                weights = setOf(WeightCategory("36"), WeightCategory("40"))
+                            )
+                        ),
+                        female = emptyList()
                     )
                 )
+
             )
         }
         val result = response.body<CompetitionDto>()
@@ -187,11 +195,14 @@ class CompetitionTest : KoinTest {
                     endDate = LocalDate.parse("2024-10-05"),
                     address = "Московская обл., п. Большевик",
                     imagePath = "/image",
-                    categories = listOf(
-                        Category(
-                            yearRange = AgeCategory("2014-2013"),
-                            weights = setOf(WeightCategory("36"), WeightCategory("40"))
-                        )
+                    categories = CategoriesByGender(
+                        male = listOf(
+                            Category(
+                                yearRange = AgeCategory("2014-2013"),
+                                weights = setOf(WeightCategory("36"), WeightCategory("40"))
+                            )
+                        ),
+                        female = emptyList()
                     )
                 )
             )

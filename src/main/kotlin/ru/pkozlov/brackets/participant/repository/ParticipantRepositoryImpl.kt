@@ -62,7 +62,7 @@ class ParticipantRepositoryImpl : ParticipantRepository {
         suspendTransaction {
             Participant.new {
                 fullName = participant.fullName
-                birthYear = participant.birthYear
+                birthDate = participant.birthDate
                 gender = participant.gender
                 ageCategory = participant.ageCategory
                 weightCategory = participant.weightCategory
@@ -75,7 +75,7 @@ class ParticipantRepositoryImpl : ParticipantRepository {
         suspendTransaction {
             Participant.findByIdAndUpdate(id) { participant ->
                 if (updatedParticipant.fullName != null) participant.fullName = updatedParticipant.fullName
-                if (updatedParticipant.birthYear != null) participant.birthYear = updatedParticipant.birthYear
+                if (updatedParticipant.birthDate != null) participant.birthDate = updatedParticipant.birthDate
                 if (updatedParticipant.gender != null) participant.gender = updatedParticipant.gender
                 if (updatedParticipant.ageCategory != null) participant.ageCategory = updatedParticipant.ageCategory
                 if (updatedParticipant.weightCategory != null) participant.weightCategory = updatedParticipant.weightCategory

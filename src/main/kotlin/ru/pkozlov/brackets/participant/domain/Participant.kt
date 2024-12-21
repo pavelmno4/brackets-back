@@ -5,16 +5,18 @@ import org.jetbrains.exposed.dao.UUIDEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.UUIDTable
 import org.jetbrains.exposed.sql.Column
+import org.jetbrains.exposed.sql.javatime.date
 import ru.pkozlov.brackets.app.dto.AgeCategory
 import ru.pkozlov.brackets.app.dto.WeightCategory
 import ru.pkozlov.brackets.app.enumeration.Gender
 import ru.pkozlov.brackets.competition.domain.CompetitionTable
 import java.math.BigDecimal
+import java.time.LocalDate
 import java.util.*
 
 object ParticipantTable : UUIDTable("participant") {
     val fullName: Column<String> = varchar("full_name", 255)
-    val birthYear: Column<Int> = integer("birth_year")
+    val birthDate: Column<LocalDate> = date("birth_date")
     val gender: Column<Gender> = enumerationByName<Gender>("gender", 6)
         .index("participant_gender_idx")
     val ageCategory: Column<AgeCategory> = varchar("age_category", 255)
@@ -42,7 +44,7 @@ class Participant(id: EntityID<UUID>) : UUIDEntity(id) {
     companion object : UUIDEntityClass<Participant>(ParticipantTable)
 
     var fullName: String by ParticipantTable.fullName
-    var birthYear: Int by ParticipantTable.birthYear
+    var birthDate: LocalDate by ParticipantTable.birthDate
     var gender: Gender by ParticipantTable.gender
     var ageCategory: AgeCategory by ParticipantTable.ageCategory
     var weightCategory: WeightCategory by ParticipantTable.weightCategory

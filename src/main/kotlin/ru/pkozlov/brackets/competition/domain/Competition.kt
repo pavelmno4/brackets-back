@@ -8,8 +8,8 @@ import org.jetbrains.exposed.sql.Column
 import org.jetbrains.exposed.sql.javatime.date
 import org.jetbrains.exposed.sql.javatime.datetime
 import org.jetbrains.exposed.sql.json.jsonb
-import ru.pkozlov.brackets.competition.dto.category.Category
 import ru.pkozlov.brackets.app.utils.json
+import ru.pkozlov.brackets.competition.dto.category.CategoriesByGender
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.*
@@ -20,7 +20,7 @@ object CompetitionTable : UUIDTable("competition") {
     val endDate: Column<LocalDate> = date("end_sate")
     val address: Column<String> = varchar("address", 255)
     val imagePath: Column<String> = varchar("image_path", 255)
-    val categories: Column<List<Category>> = jsonb("categories", json)
+    val categories: Column<CategoriesByGender> = jsonb("categories", json)
     val deleted: Column<Boolean> = bool("deleted")
     val createdAt: Column<LocalDateTime> = datetime("created_at")
     val updatedAt: Column<LocalDateTime> = datetime("updated_at")
@@ -34,7 +34,7 @@ class Competition(id: EntityID<UUID>) : UUIDEntity(id) {
     var endDate: LocalDate by CompetitionTable.endDate
     var address: String by CompetitionTable.address
     var imagePath: String by CompetitionTable.imagePath
-    var categories: List<Category> by CompetitionTable.categories
+    var categories: CategoriesByGender by CompetitionTable.categories
     var deleted: Boolean by CompetitionTable.deleted
     var createdAt: LocalDateTime by CompetitionTable.createdAt
     var updatedAt: LocalDateTime by CompetitionTable.updatedAt

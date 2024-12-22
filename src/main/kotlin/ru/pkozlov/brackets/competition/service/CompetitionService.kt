@@ -62,8 +62,9 @@ class CompetitionService(
         competitionRepository.findById(id)?.asDto()
     }
 
-    suspend fun isPassed(id: UUID): Boolean =
+    suspend fun isPassed(id: UUID): Boolean = suspendTransaction {
         competitionRepository.findById(id)
             ?.run { endDate < now().toLocalDate() }
             ?: true
+    }
 }

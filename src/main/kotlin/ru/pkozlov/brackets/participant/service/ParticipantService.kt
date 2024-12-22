@@ -1,10 +1,12 @@
 package ru.pkozlov.brackets.participant.service
 
-import org.jetbrains.exposed.exceptions.ExposedSQLException
+import ru.pkozlov.brackets.app.utils.suspendTransaction
+import ru.pkozlov.brackets.participant.domain.Participant
 import ru.pkozlov.brackets.participant.dto.CreateParticipantDto
 import ru.pkozlov.brackets.participant.dto.ParticipantDto
 import ru.pkozlov.brackets.participant.dto.PatchParticipantDto
 import ru.pkozlov.brackets.participant.dto.criteria.Criteria
+import ru.pkozlov.brackets.participant.mapper.asDto
 import ru.pkozlov.brackets.participant.repository.ParticipantRepository
 import java.util.*
 
@@ -13,7 +15,7 @@ class ParticipantService(
     private val teamComponent: TeamComponent
 ) {
     suspend fun create(competitionId: UUID, participant: CreateParticipantDto): ParticipantDto =
-        try {
+        suspendTransaction {
             val newOrExistingTeam = teamComponent.findOrCreateTeam(participant.team)
             participantRepository.create {
                 fullName = participant.fullName
@@ -23,13 +25,12 @@ class ParticipantService(
                 weightCategory = participant.weightCategory
                 team = newOrExistingTeam
                 this.competitionId = competitionId
-            }
-        } catch (exc: ExposedSQLException) {
-            throw IllegalArgumentException(exc)
+            }.asDto()
         }
 
+
     suspend fun update(id: UUID, updatedParticipant: PatchParticipantDto): ParticipantDto? =
-        try {
+        suspendTransaction {
             val newOrExistingTeam =
                 updatedParticipant.team?.run { teamComponent.findOrCreateTeam(updatedParticipant.team) }
             participantRepository.update(id) { participant ->
@@ -40,23 +41,19 @@ class ParticipantService(
                 if (updatedParticipant.weightCategory != null) participant.weightCategory = updatedParticipant.weightCategory
                 if (updatedParticipant.weight != null) participant.weight = updatedParticipant.weight
                 if (newOrExistingTeam != null) participant.team = newOrExistingTeam
-            }
-        } catch (exc: ExposedSQLException) {
-            throw IllegalArgumentException(exc)
+            }?.asDto()
         }
 
+
     suspend fun delete(id: UUID): Unit? =
-        try {
+        suspendTransaction {
             participantRepository.delete(id)
-        } catch (exc: ExposedSQLException) {
-            throw IllegalArgumentException(exc)
         }
 
     suspend fun findAllByCriteria(competitionId: UUID, criteria: Collection<Criteria<*>>): List<ParticipantDto> =
-        try {
+        suspendTransaction {
             participantRepository.findAllByCriteria(competitionId, criteria)
                 .sortedBy { participant -> participant.fullName }
-        } catch (exc: ExposedSQLException) {
-            throw IllegalArgumentException(exc)
+                .map(Participant::asDto)
         }
 }

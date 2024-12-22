@@ -4,7 +4,6 @@ import ru.pkozlov.brackets.app.dto.AgeCategory
 import ru.pkozlov.brackets.app.dto.WeightCategory
 import ru.pkozlov.brackets.app.enumeration.Gender
 import ru.pkozlov.brackets.grid.domain.Grid
-import ru.pkozlov.brackets.grid.dto.GridDto
 import java.util.*
 
 interface GridRepository {
@@ -13,9 +12,9 @@ interface GridRepository {
         gender: Gender,
         ageCategory: AgeCategory,
         weightCategory: WeightCategory
-    ): GridDto?
+    ): Grid?
 
-    suspend fun create(init: Grid.() -> Unit): GridDto
-    suspend fun update(id: UUID, action: (it: Grid) -> Unit): GridDto?
+    suspend fun create(init: Grid.() -> Unit): Grid
+    suspend fun update(id: UUID, action: (it: Grid) -> Unit): Grid?
     suspend fun deleteAllWith(competitionId: UUID): Int
 }

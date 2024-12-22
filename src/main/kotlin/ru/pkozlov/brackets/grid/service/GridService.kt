@@ -7,10 +7,12 @@ import ru.pkozlov.brackets.app.dto.AgeCategory
 import ru.pkozlov.brackets.app.dto.WeightCategory
 import ru.pkozlov.brackets.app.enumeration.Gender
 import ru.pkozlov.brackets.app.utils.bfs
+import ru.pkozlov.brackets.app.utils.suspendTransaction
 import ru.pkozlov.brackets.grid.dto.GridDto
 import ru.pkozlov.brackets.grid.dto.Node
 import ru.pkozlov.brackets.grid.dto.Participant
 import ru.pkozlov.brackets.grid.dto.PatchGridMedalistsDto
+import ru.pkozlov.brackets.grid.mapper.asDto
 import ru.pkozlov.brackets.grid.repository.GridRepository
 import ru.pkozlov.brackets.participant.dto.ParticipantDto
 import ru.pkozlov.brackets.participant.dto.criteria.GenderCriteria
@@ -23,7 +25,7 @@ class GridService(
 ) {
     private val logger: Logger = LoggerFactory.getLogger(GridService::class.java)
 
-    suspend fun generate(competitionId: UUID): List<GridDto> {
+    suspend fun generate(competitionId: UUID): List<GridDto> = suspendTransaction {
         val generationScope = CoroutineScope(Dispatchers.Default + SupervisorJob())
 
         val categories: Map<Pair<AgeCategory, WeightCategory>, List<ParticipantDto>> =
@@ -38,22 +40,24 @@ class GridService(
                 generationScope.async {
                     val (ageCategory, weightCategory) = category
 
-                    gridRepository.create {
-                        this.competitionId = competitionId
-                        this.gender = Gender.MALE
-                        this.ageCategory = ageCategory
-                        this.weightCategory = weightCategory
-                        this.dendrogram = DendrogramComponent.createAndFill(participants)
+                    suspendTransaction {
+                        gridRepository.create {
+                            this.competitionId = competitionId
+                            this.gender = Gender.MALE
+                            this.ageCategory = ageCategory
+                            this.weightCategory = weightCategory
+                            this.dendrogram = DendrogramComponent.createAndFill(participants)
+                        }.asDto()
                     }.also { logger.info("$ageCategory $weightCategory grid created") }
                 }
             }
             .awaitAll()
         generationScope.cancel()
 
-        return grids
+        grids
     }
 
-    suspend fun setWinnerForNode(gridId: UUID, nodeId: UUID, winnerNodeId: UUID): GridDto? =
+    suspend fun setWinnerForNode(gridId: UUID, nodeId: UUID, winnerNodeId: UUID): GridDto? = suspendTransaction {
         gridRepository.update(gridId) { grid ->
             val updatedDendrogram = grid.dendrogram.map { root ->
                 val targetNode: Node? = root
@@ -71,25 +75,28 @@ class GridService(
             }
             grid.dendrogram = emptyList()           // for update object link
             grid.dendrogram = updatedDendrogram
-        }
+        }?.asDto()
+    }
 
-    suspend fun patchMedalists(gridId: UUID, patchMedalists: PatchGridMedalistsDto): GridDto? =
+    suspend fun patchMedalists(gridId: UUID, patchMedalists: PatchGridMedalistsDto): GridDto? = suspendTransaction {
         gridRepository.update(gridId) { grid ->
             grid.firstPlaceParticipantId = patchMedalists.firstPlaceParticipantId
             grid.secondPlaceParticipantId = patchMedalists.secondPlaceParticipantId
             grid.thirdPlaceParticipantId = patchMedalists.thirdPlaceParticipantId
-        }
+        }?.asDto()
+    }
 
     suspend fun findBy(
         competitionId: UUID,
         gender: Gender,
         ageCategory: AgeCategory,
         weightCategory: WeightCategory
-    ): GridDto? =
+    ): GridDto? = suspendTransaction {
         gridRepository.findBy(
             competitionId = competitionId,
             gender = gender,
             ageCategory = ageCategory,
             weightCategory = weightCategory
-        )
+        )?.asDto()
+    }
 }

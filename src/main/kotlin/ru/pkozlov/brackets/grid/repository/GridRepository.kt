@@ -15,6 +15,15 @@ interface GridRepository {
     ): Grid?
 
     suspend fun create(init: Grid.() -> Unit): Grid
+
     suspend fun update(id: UUID, action: (it: Grid) -> Unit): Grid?
+
     suspend fun deleteAllWith(competitionId: UUID): Int
+
+    suspend fun deleteByGenderAgeAndWeightCategory(
+        competitionId: UUID,
+        gender: Gender,
+        ageCategory: AgeCategory,
+        weightCategory: WeightCategory
+    ): Int
 }

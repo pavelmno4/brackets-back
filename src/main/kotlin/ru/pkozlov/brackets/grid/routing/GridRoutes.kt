@@ -10,6 +10,7 @@ import org.koin.ktor.ext.inject
 import ru.pkozlov.brackets.app.dto.AgeCategory
 import ru.pkozlov.brackets.app.dto.WeightCategory
 import ru.pkozlov.brackets.app.enumeration.Gender
+import ru.pkozlov.brackets.grid.dto.GenerateGridDto
 import ru.pkozlov.brackets.grid.dto.PatchGridMedalistsDto
 import ru.pkozlov.brackets.grid.dto.PatchNodeWinnerDto
 import ru.pkozlov.brackets.grid.mapper.asView
@@ -51,8 +52,28 @@ fun Application.gridRoutes() {
                         ?.run(UUID::fromString)
                         ?: run { call.respond(HttpStatusCode.BadRequest); return@post }
 
-                    gridService.generate(competitionId)
+                    gridService.generateAutomatically(competitionId)
                         .let { grids -> call.respond(grids) }
+                }
+            }
+
+            authenticate("auth-session") {
+                post("/single") {
+                    val competitionId: UUID = call.parameters["competitionId"]
+                        ?.run(UUID::fromString)
+                        ?: run { call.respond(HttpStatusCode.BadRequest); return@post }
+
+                    val generateGridDto: GenerateGridDto = call.receive<GenerateGridDto>()
+
+                    gridService
+                        .generateForSingleCategory(
+                            competitionId = competitionId,
+                            gender = generateGridDto.gender,
+                            ageCategory = generateGridDto.ageCategory,
+                            weightCategory = generateGridDto.weightCategory
+                        )
+                        ?.let { grid -> call.respond(grid) }
+                        ?: call.respond(HttpStatusCode.NoContent)
                 }
             }
 

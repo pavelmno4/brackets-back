@@ -35,6 +35,19 @@ class GridRepositoryImpl : GridRepository {
     ): Grid? =
         Grid.findByIdAndUpdate(id, action)
 
+    override suspend fun deleteByGenderAgeAndWeightCategory(
+        competitionId: UUID,
+        gender: Gender,
+        ageCategory: AgeCategory,
+        weightCategory: WeightCategory
+    ): Int =
+        GridTable.deleteWhere {
+            GridTable.competitionId eq competitionId
+            GridTable.gender eq gender
+            GridTable.ageCategory eq ageCategory
+            GridTable.weightCategory eq weightCategory
+        }
+
     override suspend fun deleteAllWith(
         competitionId: UUID
     ): Int =

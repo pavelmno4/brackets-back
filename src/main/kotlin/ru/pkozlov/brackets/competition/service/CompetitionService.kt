@@ -4,6 +4,7 @@ import ru.pkozlov.brackets.app.utils.suspendTransaction
 import ru.pkozlov.brackets.competition.domain.Competition
 import ru.pkozlov.brackets.competition.dto.competition.CompetitionDto
 import ru.pkozlov.brackets.competition.dto.competition.PersistCompetitionDto
+import ru.pkozlov.brackets.competition.enumeration.Stage.*
 import ru.pkozlov.brackets.competition.mapper.asDto
 import ru.pkozlov.brackets.competition.repository.CompetitionRepository
 import ru.pkozlov.brackets.grid.service.GridService
@@ -25,6 +26,7 @@ class CompetitionService(
             address = competition.address
             imagePath = competition.imagePath
             categories = competition.categories
+            stage = REGISTRATION
             deleted = false
             createdAt = now()
             updatedAt = now()
@@ -51,9 +53,22 @@ class CompetitionService(
     }
 
     suspend fun startCompetition(id: UUID): CompetitionDto? = suspendTransaction {
-        competitionRepository.findById(id)?.also {
-            participantService.deleteAllWhereWeightIsNull(id)
-            gridService.generateAutomatically(id)
+        competitionRepository
+            .update(id) { competition ->
+                competition.stage = RUNNING
+                competition.updatedAt = now()
+            }
+            ?.also {
+                participantService.deleteAllWhereWeightIsNull(id)
+                gridService.generateAutomatically(id)
+            }
+            ?.asDto()
+    }
+
+    suspend fun completeCompetition(id: UUID): CompetitionDto? = suspendTransaction {
+        competitionRepository.update(id) { competition ->
+            competition.stage = COMPLETED
+            competition.updatedAt = now()
         }?.asDto()
     }
 

@@ -4,6 +4,7 @@ import kotlinx.serialization.Serializable
 import ru.pkozlov.brackets.app.utils.serializer.LocalDateSerializer
 import ru.pkozlov.brackets.app.utils.serializer.UUIDSerializer
 import ru.pkozlov.brackets.competition.dto.category.CategoriesByGender
+import ru.pkozlov.brackets.competition.enumeration.Stage
 import java.time.LocalDate
 import java.util.*
 
@@ -19,5 +20,6 @@ data class CompetitionDto(
     val address: String,
     val imagePath: String,
     val categories: CategoriesByGender,
+    val stage: Stage,
     val deleted: Boolean
 )

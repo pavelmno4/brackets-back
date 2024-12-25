@@ -2,10 +2,9 @@ package ru.pkozlov.brackets.participant.repository
 
 import org.jetbrains.exposed.dao.load
 import org.jetbrains.exposed.dao.with
-import org.jetbrains.exposed.sql.Query
-import org.jetbrains.exposed.sql.andWhere
-import org.jetbrains.exposed.sql.innerJoin
-import org.jetbrains.exposed.sql.selectAll
+import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.isNull
 import ru.pkozlov.brackets.participant.domain.Participant
 import ru.pkozlov.brackets.participant.domain.ParticipantTable
 import ru.pkozlov.brackets.participant.domain.TeamTable
@@ -54,4 +53,10 @@ class ParticipantRepositoryImpl : ParticipantRepository {
 
     override suspend fun delete(id: UUID): Unit? =
         Participant.findById(id)?.delete()
+
+    override suspend fun deleteAllWhereWeightIsNull(competitionId: UUID): Int =
+        ParticipantTable.deleteWhere {
+            ParticipantTable.competitionId eq competitionId and
+                    (ParticipantTable.weight.isNull())
+        }
 }

@@ -50,6 +50,11 @@ class ParticipantService(
             participantRepository.delete(id)
         }
 
+    suspend fun deleteAllWhereWeightIsNull(competitionId: UUID): Int =
+        suspendTransaction {
+            participantRepository.deleteAllWhereWeightIsNull(competitionId)
+        }
+
     suspend fun findAllByCriteria(competitionId: UUID, criteria: Collection<Criteria<*>>): List<ParticipantDto> =
         suspendTransaction {
             participantRepository.findAllByCriteria(competitionId, criteria)

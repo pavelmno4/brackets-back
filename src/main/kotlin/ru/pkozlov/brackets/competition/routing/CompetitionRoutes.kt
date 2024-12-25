@@ -63,6 +63,21 @@ fun Application.competitionRoutes() {
                 }
             }
 
+            authenticate("auth-session") {
+                post("/{id}/start") {
+                    try {
+                        val id: UUID = call.parameters["id"]?.run(UUID::fromString) ?: throw IllegalStateException()
+
+                        competitionService.startCompetition(id)
+                            ?.let { competition -> call.respond(competition) }
+                            ?: call.respond(HttpStatusCode.NoContent)
+
+                    } catch (exc: IllegalArgumentException) {
+                        call.respond(HttpStatusCode.BadRequest)
+                    }
+                }
+            }
+
             get("/{id}/categories") {
                 try {
                     val id: UUID = call.parameters["id"]?.run(UUID::fromString) ?: throw IllegalStateException()

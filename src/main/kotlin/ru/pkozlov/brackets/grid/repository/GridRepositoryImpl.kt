@@ -42,10 +42,10 @@ class GridRepositoryImpl : GridRepository {
         weightCategory: WeightCategory
     ): Int =
         GridTable.deleteWhere {
-            GridTable.competitionId eq competitionId
-            GridTable.gender eq gender
-            GridTable.ageCategory eq ageCategory
-            GridTable.weightCategory eq weightCategory
+            GridTable.competitionId eq competitionId and
+                    (GridTable.gender eq gender) and
+                    (GridTable.ageCategory eq ageCategory) and
+                    (GridTable.weightCategory eq weightCategory)
         }
 
     override suspend fun deleteAllWith(

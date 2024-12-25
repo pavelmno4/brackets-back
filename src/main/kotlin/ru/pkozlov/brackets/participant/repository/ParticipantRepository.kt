@@ -11,4 +11,5 @@ interface ParticipantRepository {
     suspend fun create(init: Participant.() -> Unit): Participant
     suspend fun update(id: UUID, action: (it: Participant) -> Unit): Participant?
     suspend fun delete(id: UUID): Unit?
+    suspend fun deleteAllWhereWeightIsNull(competitionId: UUID): Int
 }

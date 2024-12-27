@@ -31,8 +31,7 @@ private fun Node.asNodesList(): List<NodeView> =
             id = node.id,
             data = node.participant?.run {
                 NodeView.Data(
-                    participantFullName = fullName,
-                    team = team
+                    participantId = id
                 )
             }
         ).run(result::add)

@@ -12,7 +12,7 @@ data class NodeView(
 ) {
     @Serializable
     data class Data(
-        val participantFullName: String,
-        val team: String
+        @Serializable(UUIDSerializer::class)
+        val participantId: UUID
     )
 }

@@ -12,6 +12,7 @@ import ru.pkozlov.brackets.app.dto.WeightCategory
 import ru.pkozlov.brackets.app.enumeration.Gender
 import ru.pkozlov.brackets.grid.dto.GenerateGridDto
 import ru.pkozlov.brackets.grid.dto.PatchGridMedalistsDto
+import ru.pkozlov.brackets.grid.dto.PatchGridSwapNodesDto
 import ru.pkozlov.brackets.grid.dto.PatchNodeWinnerDto
 import ru.pkozlov.brackets.grid.mapper.asView
 import ru.pkozlov.brackets.grid.service.GridService
@@ -86,6 +87,20 @@ fun Application.gridRoutes() {
                     val patchMedalistsDto: PatchGridMedalistsDto = call.receive<PatchGridMedalistsDto>()
 
                     gridService.patchMedalists(gridId, patchMedalistsDto)
+                        ?.let { updatedGrid -> call.respond(updatedGrid) }
+                        ?: call.respond(HttpStatusCode.NoContent)
+                }
+            }
+
+            authenticate("auth-session") {
+                patch("/{gridId}/nodes/swap") {
+                    val gridId: UUID = call.parameters["gridId"]
+                        ?.run(UUID::fromString)
+                        ?: run { call.respond(HttpStatusCode.BadRequest); return@patch }
+
+                    val swapNodesDto: PatchGridSwapNodesDto = call.receive<PatchGridSwapNodesDto>()
+
+                    gridService.swapNodes(gridId, swapNodesDto)
                         ?.let { updatedGrid -> call.respond(updatedGrid) }
                         ?: call.respond(HttpStatusCode.NoContent)
                 }

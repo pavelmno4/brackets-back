@@ -8,10 +8,7 @@ import ru.pkozlov.brackets.app.dto.WeightCategory
 import ru.pkozlov.brackets.app.enumeration.Gender
 import ru.pkozlov.brackets.app.utils.bfs
 import ru.pkozlov.brackets.app.utils.suspendTransaction
-import ru.pkozlov.brackets.grid.dto.GridDto
-import ru.pkozlov.brackets.grid.dto.Node
-import ru.pkozlov.brackets.grid.dto.Participant
-import ru.pkozlov.brackets.grid.dto.PatchGridMedalistsDto
+import ru.pkozlov.brackets.grid.dto.*
 import ru.pkozlov.brackets.grid.mapper.asDto
 import ru.pkozlov.brackets.grid.repository.GridRepository
 import ru.pkozlov.brackets.participant.dto.ParticipantDto
@@ -88,6 +85,31 @@ class GridService(
             grid.firstPlaceParticipantId = patchMedalists.firstPlaceParticipantId
             grid.secondPlaceParticipantId = patchMedalists.secondPlaceParticipantId
             grid.thirdPlaceParticipantId = patchMedalists.thirdPlaceParticipantId
+        }?.asDto()
+    }
+
+    suspend fun swapNodes(gridId: UUID, swapNodes: PatchGridSwapNodesDto): GridDto? = suspendTransaction {
+        gridRepository.update(gridId) { grid ->
+            val updatedDendrogram = grid.dendrogram.map { root ->
+                val (firstNode, secondNode) = root
+                    .bfs { result, node ->
+                        if (node.id == swapNodes.firstNodeId || node.id == swapNodes.secondNodeId)
+                            result.add(node)
+                    }
+                    .run { getOrNull(0) to getOrNull(1) }
+
+                val firstNodeOriginalParticipant = firstNode?.participant
+
+                firstNode?.apply {
+                    participant = secondNode?.participant
+                }
+                secondNode?.apply {
+                    participant = firstNodeOriginalParticipant
+                }
+                root
+            }
+            grid.dendrogram = emptyList()           // for update object link
+            grid.dendrogram = updatedDendrogram
         }?.asDto()
     }
 

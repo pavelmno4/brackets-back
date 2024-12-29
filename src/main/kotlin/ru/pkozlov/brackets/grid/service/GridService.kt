@@ -66,12 +66,20 @@ class GridService(
                     .bfs { result, node -> if (node.id == nodeId) result.add(node) }
                     .firstOrNull()
 
-                val winner: Participant? = root
-                    .bfs { result, node -> if (node.id == winnerNodeId) result.add(node.participant) }
-                    .firstOrNull()
+                val winner: Participant? = targetNode?.run {
+                    if (left?.id == winnerNodeId) {
+                        right?.participant = right?.participant?.copy(winner = false)
+                        left.participant = left.participant?.copy(winner = true)
+                        left.participant
+                    } else if (right?.id == winnerNodeId) {
+                        left?.participant = left?.participant?.copy(winner = false)
+                        right.participant = right.participant?.copy(winner = true)
+                        right.participant
+                    } else null
+                }
 
                 targetNode?.apply {
-                    participant = winner
+                    participant = winner?.copy(winner = false)
                 }
                 root
             }

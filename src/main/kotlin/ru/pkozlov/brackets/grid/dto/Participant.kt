@@ -9,5 +9,6 @@ data class Participant(
     @Serializable(UUIDSerializer::class)
     val id: UUID,
     val fullName: String,
-    val team: String
+    val team: String,
+    val winner: Boolean
 )

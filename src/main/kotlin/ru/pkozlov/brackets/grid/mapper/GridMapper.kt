@@ -31,7 +31,8 @@ private fun Node.asNodesList(): List<NodeView> =
             id = node.id,
             data = node.participant?.run {
                 NodeView.Data(
-                    participantId = id
+                    participantId = id,
+                    winner = winner
                 )
             }
         ).run(result::add)

@@ -13,6 +13,7 @@ data class NodeView(
     @Serializable
     data class Data(
         @Serializable(UUIDSerializer::class)
-        val participantId: UUID
+        val participantId: UUID,
+        val winner: Boolean
     )
 }

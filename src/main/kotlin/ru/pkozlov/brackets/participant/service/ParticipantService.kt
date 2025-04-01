@@ -18,7 +18,7 @@ class ParticipantService(
         suspendTransaction {
             val newOrExistingTeam = teamComponent.findOrCreateTeam(participant.team)
             participantRepository.create {
-                fullName = participant.fullName
+                fullName = participant.fullName.trim()
                 birthDate = participant.birthDate
                 gender = participant.gender
                 ageCategory = participant.ageCategory
@@ -34,7 +34,7 @@ class ParticipantService(
             val newOrExistingTeam =
                 updatedParticipant.team?.run { teamComponent.findOrCreateTeam(updatedParticipant.team) }
             participantRepository.update(id) { participant ->
-                if (updatedParticipant.fullName != null) participant.fullName = updatedParticipant.fullName
+                if (updatedParticipant.fullName != null) participant.fullName = updatedParticipant.fullName.trim()
                 if (updatedParticipant.birthDate != null) participant.birthDate = updatedParticipant.birthDate
                 if (updatedParticipant.gender != null) participant.gender = updatedParticipant.gender
                 if (updatedParticipant.ageCategory != null) participant.ageCategory = updatedParticipant.ageCategory

@@ -6,5 +6,5 @@ import ru.pkozlov.brackets.participant.repository.TeamRepository
 class TeamComponent(
     private val teamRepository: TeamRepository
 ) {
-    suspend fun findOrCreateTeam(teamName: String): Team = teamRepository.findOrCreate(teamName)
+    suspend fun findOrCreateTeam(teamName: String): Team = teamRepository.findOrCreate(teamName.trim())
 }

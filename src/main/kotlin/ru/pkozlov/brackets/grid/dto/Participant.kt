@@ -8,7 +8,9 @@ import java.util.*
 data class Participant(
     @Serializable(UUIDSerializer::class)
     val id: UUID,
-    val fullName: String,
+    val firstName: String,
+    val lastName: String,
+    val middleName: String,
     val team: String,
     val winner: Boolean
 )

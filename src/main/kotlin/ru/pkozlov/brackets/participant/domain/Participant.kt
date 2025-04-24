@@ -15,7 +15,9 @@ import java.time.LocalDate
 import java.util.*
 
 object ParticipantTable : UUIDTable("participant") {
-    val fullName: Column<String> = varchar("full_name", 255)
+    val firstName: Column<String> = varchar("first_name", 255)
+    val lastName: Column<String> = varchar("last_name", 255)
+    val middleName: Column<String> = varchar("middle_name", 255)
     val birthDate: Column<LocalDate> = date("birth_date")
     val gender: Column<Gender> = enumerationByName<Gender>("gender", 6)
         .index("participant_gender_idx")
@@ -43,7 +45,9 @@ object ParticipantTable : UUIDTable("participant") {
 class Participant(id: EntityID<UUID>) : UUIDEntity(id) {
     companion object : UUIDEntityClass<Participant>(ParticipantTable)
 
-    var fullName: String by ParticipantTable.fullName
+    var firstName: String by ParticipantTable.firstName
+    var lastName: String by ParticipantTable.lastName
+    var middleName: String by ParticipantTable.middleName
     var birthDate: LocalDate by ParticipantTable.birthDate
     var gender: Gender by ParticipantTable.gender
     var ageCategory: AgeCategory by ParticipantTable.ageCategory

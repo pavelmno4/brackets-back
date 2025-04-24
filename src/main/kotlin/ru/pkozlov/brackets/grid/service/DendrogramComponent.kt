@@ -58,7 +58,9 @@ object DendrogramComponent {
             val leftIteratingParticipant = participantsQueue.poll()
             node.left?.participant = Participant(
                 id = leftIteratingParticipant.id,
-                fullName = leftIteratingParticipant.fullName,
+                firstName = leftIteratingParticipant.firstName,
+                lastName = leftIteratingParticipant.lastName,
+                middleName = leftIteratingParticipant.middleName,
                 team = leftIteratingParticipant.team,
                 winner = false
             )
@@ -67,7 +69,9 @@ object DendrogramComponent {
             val rightIteratingParticipant = participantsQueue.poll()
             node.right?.participant = Participant(
                 id = rightIteratingParticipant.id,
-                fullName = rightIteratingParticipant.fullName,
+                firstName = rightIteratingParticipant.firstName,
+                lastName = rightIteratingParticipant.lastName,
+                middleName = rightIteratingParticipant.middleName,
                 team = rightIteratingParticipant.team,
                 winner = false
             )
@@ -85,7 +89,9 @@ object DendrogramComponent {
             penultimateLevel.pollLast().apply {
                 participant = Participant(
                     id = iteratingParticipant.id,
-                    fullName = iteratingParticipant.fullName,
+                    firstName = iteratingParticipant.firstName,
+                    lastName = iteratingParticipant.lastName,
+                    middleName = iteratingParticipant.middleName,
                     team = iteratingParticipant.team,
                     winner = false
                 )
@@ -102,7 +108,9 @@ object DendrogramComponent {
                 left?.participant = teams.pollAndAddToTail().run {
                     Participant(
                         id = id,
-                        fullName = fullName,
+                        firstName = firstName,
+                        lastName = lastName,
+                        middleName = middleName,
                         team = team,
                         winner = false
                     )
@@ -110,7 +118,9 @@ object DendrogramComponent {
                 right?.participant = teams.pollAndAddToTail().run {
                     Participant(
                         id = id,
-                        fullName = fullName,
+                        firstName = firstName,
+                        lastName = lastName,
+                        middleName = middleName,
                         team = team,
                         winner = false
                     )

@@ -11,7 +11,9 @@ import java.time.LocalDate
 
 @Serializable
 data class CreateParticipantDto(
-    val fullName: String,
+    val firstName: String,
+    val lastName: String,
+    val middleName: String,
     @Serializable(LocalDateSerializer::class)
     val birthDate: LocalDate,
     val gender: Gender,

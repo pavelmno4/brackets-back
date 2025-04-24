@@ -13,7 +13,9 @@ import java.time.LocalDate
 
 @Serializable
 data class PatchParticipantDto(
-    val fullName: String? = null,
+    val firstName: String? = null,
+    val lastName: String? = null,
+    val middleName: String? = null,
     @Serializable(LocalDateSerializer::class)
     val birthDate: LocalDate? = null,
     val gender: Gender? = null,

@@ -5,7 +5,9 @@ import ru.pkozlov.brackets.participant.dto.ParticipantDto
 
 fun Participant.asDto(): ParticipantDto = ParticipantDto(
     id = id.value,
-    fullName = fullName,
+    firstName = firstName,
+    lastName = lastName,
+    middleName = middleName,
     birthDate = birthDate,
     gender = gender,
     ageCategory = ageCategory,

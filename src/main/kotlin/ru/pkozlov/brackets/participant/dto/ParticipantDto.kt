@@ -13,7 +13,9 @@ import java.util.*
 data class ParticipantDto(
     @Serializable(UUIDSerializer::class)
     val id: UUID,
-    val fullName: String,
+    val firstName: String,
+    val lastName: String,
+    val middleName: String,
     @Serializable(LocalDateSerializer::class)
     val birthDate: LocalDate,
     val gender: Gender,

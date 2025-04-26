@@ -1,17 +1,12 @@
-package ru.pkozlov.brackets.competition.dto.competition
+package ru.pkozlov.brackets.competition.dto
 
 import kotlinx.serialization.Serializable
 import ru.pkozlov.brackets.app.utils.serializer.LocalDateSerializer
-import ru.pkozlov.brackets.app.utils.serializer.UUIDSerializer
 import ru.pkozlov.brackets.competition.dto.category.CategoriesByGender
-import ru.pkozlov.brackets.competition.enumeration.Stage
 import java.time.LocalDate
-import java.util.*
 
 @Serializable
-data class CompetitionDto(
-    @Serializable(UUIDSerializer::class)
-    val id: UUID,
+data class PersistCompetitionDto(
     val title: String,
     @Serializable(LocalDateSerializer::class)
     val startDate: LocalDate,
@@ -19,7 +14,5 @@ data class CompetitionDto(
     val endDate: LocalDate,
     val address: String,
     val imagePath: String,
-    val categories: CategoriesByGender,
-    val stage: Stage,
-    val deleted: Boolean
+    val categories: CategoriesByGender
 )

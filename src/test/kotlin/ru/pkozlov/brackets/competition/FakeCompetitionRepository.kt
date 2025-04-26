@@ -5,7 +5,7 @@ import ru.pkozlov.brackets.app.dto.WeightCategory
 import ru.pkozlov.brackets.competition.domain.Competition
 import ru.pkozlov.brackets.competition.dto.category.CategoriesByGender
 import ru.pkozlov.brackets.competition.dto.category.Category
-import ru.pkozlov.brackets.competition.dto.competition.CompetitionDto
+import ru.pkozlov.brackets.competition.dto.CompetitionDto
 import ru.pkozlov.brackets.competition.repository.CompetitionRepository
 import java.time.LocalDate
 import java.util.*

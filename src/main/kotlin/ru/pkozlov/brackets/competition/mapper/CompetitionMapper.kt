@@ -1,7 +1,7 @@
 package ru.pkozlov.brackets.competition.mapper
 
 import ru.pkozlov.brackets.competition.domain.Competition
-import ru.pkozlov.brackets.competition.dto.competition.CompetitionDto
+import ru.pkozlov.brackets.competition.dto.CompetitionDto
 
 fun Competition.asDto(): CompetitionDto =
     CompetitionDto(

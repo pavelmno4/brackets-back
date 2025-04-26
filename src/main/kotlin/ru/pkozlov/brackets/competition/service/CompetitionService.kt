@@ -2,8 +2,8 @@ package ru.pkozlov.brackets.competition.service
 
 import ru.pkozlov.brackets.app.utils.suspendTransaction
 import ru.pkozlov.brackets.competition.domain.Competition
-import ru.pkozlov.brackets.competition.dto.competition.CompetitionDto
-import ru.pkozlov.brackets.competition.dto.competition.PersistCompetitionDto
+import ru.pkozlov.brackets.competition.dto.CompetitionDto
+import ru.pkozlov.brackets.competition.dto.PersistCompetitionDto
 import ru.pkozlov.brackets.competition.enumeration.Stage.*
 import ru.pkozlov.brackets.competition.mapper.asDto
 import ru.pkozlov.brackets.competition.repository.CompetitionRepository

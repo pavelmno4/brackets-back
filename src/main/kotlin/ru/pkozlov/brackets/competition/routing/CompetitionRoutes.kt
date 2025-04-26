@@ -7,7 +7,7 @@ import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import org.koin.ktor.ext.inject
-import ru.pkozlov.brackets.competition.dto.competition.PersistCompetitionDto
+import ru.pkozlov.brackets.competition.dto.PersistCompetitionDto
 import ru.pkozlov.brackets.competition.service.CompetitionService
 import java.util.*
 

@@ -16,8 +16,8 @@ import ru.pkozlov.brackets.app.dto.AgeCategory
 import ru.pkozlov.brackets.app.dto.WeightCategory
 import ru.pkozlov.brackets.competition.dto.category.CategoriesByGender
 import ru.pkozlov.brackets.competition.dto.category.Category
-import ru.pkozlov.brackets.competition.dto.competition.CompetitionDto
-import ru.pkozlov.brackets.competition.dto.competition.PersistCompetitionDto
+import ru.pkozlov.brackets.competition.dto.CompetitionDto
+import ru.pkozlov.brackets.competition.dto.PersistCompetitionDto
 import java.time.LocalDate
 import java.time.LocalDateTime
 import kotlin.test.AfterTest

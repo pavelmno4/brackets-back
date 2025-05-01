@@ -8,6 +8,7 @@ val flyway_version: String by project
 val jasypt_version: String by project
 val logback_version: String by project
 val mockk_version: String by project
+val kotlinx_html_version: String by project
 
 plugins {
     kotlin("jvm") version "2.0.20"
@@ -68,6 +69,7 @@ dependencies {
 
     /** JetBrains */
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-hocon")
+    implementation("org.jetbrains.kotlinx:kotlinx-html-jvm:$kotlinx_html_version")
 
     /** Database */
     implementation("com.zaxxer:HikariCP:$hikari_version")

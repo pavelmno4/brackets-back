@@ -9,10 +9,10 @@ import java.util.*
 interface GridRepository {
     suspend fun findBy(
         competitionId: UUID,
-        gender: Gender,
-        ageCategory: AgeCategory,
-        weightCategory: WeightCategory
-    ): Grid?
+        gender: Gender?,
+        ageCategory: AgeCategory?,
+        weightCategory: WeightCategory?
+    ): List<Grid>
 
     suspend fun create(init: Grid.() -> Unit): Grid
 

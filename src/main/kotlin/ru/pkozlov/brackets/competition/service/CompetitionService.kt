@@ -7,7 +7,6 @@ import ru.pkozlov.brackets.competition.dto.PersistCompetitionDto
 import ru.pkozlov.brackets.competition.enumeration.Stage.*
 import ru.pkozlov.brackets.competition.mapper.asDto
 import ru.pkozlov.brackets.competition.repository.CompetitionRepository
-import ru.pkozlov.brackets.grid.service.GridService
 import ru.pkozlov.brackets.participant.service.ParticipantService
 import java.time.LocalDateTime
 import java.util.*
@@ -15,7 +14,6 @@ import java.util.*
 class CompetitionService(
     private val competitionRepository: CompetitionRepository,
     private val participantService: ParticipantService,
-    private val gridService: GridService,
     private val now: () -> LocalDateTime
 ) {
     suspend fun create(competition: PersistCompetitionDto): CompetitionDto = suspendTransaction {
@@ -64,7 +62,6 @@ class CompetitionService(
             }?.asDto()
         }?.also {
             participantService.deleteAllWhereWeightIsNull(id)
-            gridService.generateAutomatically(id)
         }
 
     suspend fun completeCompetition(id: UUID): CompetitionDto? = suspendTransaction {

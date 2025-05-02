@@ -132,18 +132,14 @@ fun Application.gridRoutes() {
 
             authenticate("auth-session") {
                 get("/files") {
-                    try {
-                        val competitionId = call.parameters["competitionId"]?.run(UUID::fromString)
-                            ?: throw IllegalStateException("Param 'competitionId' is required")
-                        val gender = call.request.queryParameters["gender"]?.run(Gender::valueOf)
-                        val ageCategory = call.request.queryParameters["ageCategory"]?.run(::AgeCategory)
-                        val weightCategory = call.request.queryParameters["weightCategory"]?.run(::WeightCategory)
+                    val competitionId = call.parameters["competitionId"]?.run(UUID::fromString)
+                        ?: throw IllegalStateException("Param 'competitionId' is required")
+                    val gender = call.request.queryParameters["gender"]?.run(Gender::valueOf)
+                    val ageCategory = call.request.queryParameters["ageCategory"]?.run(::AgeCategory)
+                    val weightCategory = call.request.queryParameters["weightCategory"]?.run(::WeightCategory)
 
-                        gridService.generateFiles(competitionId, gender, ageCategory, weightCategory)
-                            .let { call.respond(HttpStatusCode.OK, "Grid files generated") }
-                    } catch (exc: IllegalArgumentException) {
-                        call.respond(HttpStatusCode.BadRequest) { exc.message }
-                    }
+                    gridService.generateFiles(competitionId, gender, ageCategory, weightCategory)
+                        .let { call.respond(HttpStatusCode.OK, "Grid files generated") }
                 }
             }
         }

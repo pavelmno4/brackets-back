@@ -9,7 +9,8 @@ import ru.pkozlov.brackets.app.enumeration.Gender
 import ru.pkozlov.brackets.app.utils.bfs
 import ru.pkozlov.brackets.app.utils.suspendTransaction
 import ru.pkozlov.brackets.competition.service.CompetitionService
-import ru.pkozlov.brackets.file.service.GridHtmlComponent
+import ru.pkozlov.brackets.file.service.FileService
+import ru.pkozlov.brackets.grid.domain.Grid
 import ru.pkozlov.brackets.grid.dto.*
 import ru.pkozlov.brackets.grid.mapper.asDto
 import ru.pkozlov.brackets.grid.repository.GridRepository
@@ -18,13 +19,13 @@ import ru.pkozlov.brackets.participant.dto.criteria.AgeCategoryCriteria
 import ru.pkozlov.brackets.participant.dto.criteria.GenderCriteria
 import ru.pkozlov.brackets.participant.dto.criteria.WeightCategoryCriteria
 import ru.pkozlov.brackets.participant.service.ParticipantService
-import java.io.File
 import java.util.*
 
 class GridService(
     private val gridRepository: GridRepository,
     private val competitionService: CompetitionService,
-    private val participantService: ParticipantService
+    private val participantService: ParticipantService,
+    private val fileService: FileService
 ) {
     private val logger: Logger = LoggerFactory.getLogger(GridService::class.java)
 
@@ -132,13 +133,8 @@ class GridService(
         weightCategory: WeightCategory?
     ) = suspendTransaction {
         competitionService.findById(competitionId)?.let { competition ->
-            gridRepository.findBy(competition.id, gender, ageCategory, weightCategory).forEachIndexed { index, grid ->
-                // ToDo create zip in right place
-                val file = File("${competition.startDate}_${index.inc()}.html")
-
-                GridHtmlComponent
-                    .createHtml(competition, grid.asDto())
-                    .run(file::writeText)
+            gridRepository.findBy(competition.id, gender, ageCategory, weightCategory).map(Grid::asDto).let { grids ->
+                fileService.getGridsContentInPdf(competition, grids)
             }
         }
     }

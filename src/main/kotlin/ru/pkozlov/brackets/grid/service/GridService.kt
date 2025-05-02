@@ -8,8 +8,6 @@ import ru.pkozlov.brackets.app.dto.WeightCategory
 import ru.pkozlov.brackets.app.enumeration.Gender
 import ru.pkozlov.brackets.app.utils.bfs
 import ru.pkozlov.brackets.app.utils.suspendTransaction
-import ru.pkozlov.brackets.competition.service.CompetitionService
-import ru.pkozlov.brackets.file.service.FileService
 import ru.pkozlov.brackets.grid.domain.Grid
 import ru.pkozlov.brackets.grid.dto.*
 import ru.pkozlov.brackets.grid.mapper.asDto
@@ -23,9 +21,7 @@ import java.util.*
 
 class GridService(
     private val gridRepository: GridRepository,
-    private val competitionService: CompetitionService,
-    private val participantService: ParticipantService,
-    private val fileService: FileService
+    private val participantService: ParticipantService
 ) {
     private val logger: Logger = LoggerFactory.getLogger(GridService::class.java)
 
@@ -126,31 +122,18 @@ class GridService(
         }?.asDto()
     }
 
-    suspend fun generateFiles(
+    suspend fun findBy(
         competitionId: UUID,
         gender: Gender?,
         ageCategory: AgeCategory?,
         weightCategory: WeightCategory?
-    ) = suspendTransaction {
-        competitionService.findById(competitionId)?.let { competition ->
-            gridRepository.findBy(competition.id, gender, ageCategory, weightCategory).map(Grid::asDto).let { grids ->
-                fileService.getGridsContentInPdf(competition, grids)
-            }
-        }
-    }
-
-    suspend fun findBy(
-        competitionId: UUID,
-        gender: Gender,
-        ageCategory: AgeCategory,
-        weightCategory: WeightCategory
-    ): GridDto? = suspendTransaction {
+    ): List<GridDto> = suspendTransaction {
         gridRepository.findBy(
             competitionId = competitionId,
             gender = gender,
             ageCategory = ageCategory,
             weightCategory = weightCategory
-        ).firstOrNull()?.asDto()
+        ).map(Grid::asDto)
     }
 
     private suspend fun generate(

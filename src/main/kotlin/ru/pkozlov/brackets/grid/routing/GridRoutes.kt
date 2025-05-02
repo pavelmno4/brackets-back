@@ -38,7 +38,7 @@ fun Application.gridRoutes() {
                     val weightCategory = call.request.queryParameters["weightCategory"]?.run(::WeightCategory)
                         ?: throw IllegalStateException("Param 'weightCategory' is required")
 
-                    gridService.findBy(competitionId, gender, ageCategory, weightCategory)
+                    gridService.findBy(competitionId, gender, ageCategory, weightCategory).firstOrNull()
                         ?.let { grid -> call.respond(grid.asView()) }
                         ?: call.respond(HttpStatusCode.NoContent)
 
@@ -127,19 +127,6 @@ fun Application.gridRoutes() {
             authenticate("auth-session") {
                 patch("/{gridId}/nodes/{nodeId}/participant") {
                     call.respond(HttpStatusCode.OK)
-                }
-            }
-
-            authenticate("auth-session") {
-                get("/files") {
-                    val competitionId = call.parameters["competitionId"]?.run(UUID::fromString)
-                        ?: throw IllegalStateException("Param 'competitionId' is required")
-                    val gender = call.request.queryParameters["gender"]?.run(Gender::valueOf)
-                    val ageCategory = call.request.queryParameters["ageCategory"]?.run(::AgeCategory)
-                    val weightCategory = call.request.queryParameters["weightCategory"]?.run(::WeightCategory)
-
-                    gridService.generateFiles(competitionId, gender, ageCategory, weightCategory)
-                        .let { call.respond(HttpStatusCode.OK, "Grid files generated") }
                 }
             }
         }

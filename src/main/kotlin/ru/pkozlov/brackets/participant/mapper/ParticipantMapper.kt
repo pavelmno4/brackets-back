@@ -13,5 +13,8 @@ fun Participant.asDto(): ParticipantDto = ParticipantDto(
     ageCategory = ageCategory,
     weightCategory = weightCategory,
     weight = weight,
+    rank = rank,
+    settlement = settlement,
+    coachFullName = coachFullName,
     team = team.name
 )

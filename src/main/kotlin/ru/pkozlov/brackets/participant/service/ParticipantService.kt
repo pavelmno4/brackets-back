@@ -25,6 +25,9 @@ class ParticipantService(
                 gender = participant.gender
                 ageCategory = participant.ageCategory
                 weightCategory = participant.weightCategory
+                rank = participant.rank
+                settlement = participant.settlement
+                coachFullName = participant.coachFullName
                 team = newOrExistingTeam
                 this.competitionId = competitionId
             }.asDto()
@@ -44,6 +47,9 @@ class ParticipantService(
                 if (updatedParticipant.ageCategory != null) participant.ageCategory = updatedParticipant.ageCategory
                 if (updatedParticipant.weightCategory != null) participant.weightCategory = updatedParticipant.weightCategory
                 if (updatedParticipant.weight != null) participant.weight = updatedParticipant.weight
+                if (updatedParticipant.rank != null) participant.rank = updatedParticipant.rank
+                if (updatedParticipant.settlement != null) participant.settlement = updatedParticipant.settlement
+                if (updatedParticipant.coachFullName != null) participant.coachFullName = updatedParticipant.coachFullName
                 if (newOrExistingTeam != null) participant.team = newOrExistingTeam
             }?.asDto()
         }

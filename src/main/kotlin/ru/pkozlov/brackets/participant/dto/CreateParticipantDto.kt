@@ -21,5 +21,8 @@ data class CreateParticipantDto(
     val ageCategory: AgeCategory,
     @Serializable(WeightCategorySerializer::class)
     val weightCategory: WeightCategory,
+    val rank: String,
+    val settlement: String,
+    val coachFullName: String,
     val team: String
 )

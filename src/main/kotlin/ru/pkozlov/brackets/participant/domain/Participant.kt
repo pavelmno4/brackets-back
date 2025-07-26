@@ -28,6 +28,9 @@ object ParticipantTable : UUIDTable("participant") {
         .transform({ WeightCategory(it) }, { it.value })
         .index("participant_weight_category_idx")
     val weight: Column<BigDecimal?> = decimal("weight", 5, 2).nullable()
+    val rank: Column<String?> = varchar("rank", 255).nullable()
+    val settlement: Column<String?> = varchar("settlement", 255).nullable()
+    val coachFullName: Column<String?> = varchar("coach_full_name", 255).nullable()
     val teamId: Column<EntityID<UUID>> = reference(
         name = "team_id",
         foreign = TeamTable,
@@ -53,6 +56,9 @@ class Participant(id: EntityID<UUID>) : UUIDEntity(id) {
     var ageCategory: AgeCategory by ParticipantTable.ageCategory
     var weightCategory: WeightCategory by ParticipantTable.weightCategory
     var weight: BigDecimal? by ParticipantTable.weight
+    var rank: String? by ParticipantTable.rank
+    var settlement: String? by ParticipantTable.settlement
+    var coachFullName: String? by ParticipantTable.coachFullName
     var team: Team by Team referencedOn ParticipantTable.teamId
     var competitionId: UUID by ParticipantTable.competitionId
 }

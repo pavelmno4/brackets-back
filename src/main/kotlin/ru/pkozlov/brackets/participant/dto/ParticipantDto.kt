@@ -25,5 +25,8 @@ data class ParticipantDto(
     val weightCategory: WeightCategory,
     @Serializable(BigDecimalSerializer::class)
     val weight: BigDecimal?,
+    val rank: String?,
+    val settlement: String?,
+    val coachFullName: String?,
     val team: String
 )

@@ -20,6 +20,8 @@ data class CompetitionDto(
     val address: String,
     val imagePath: String,
     val categories: CategoriesByGender,
+    val chiefSecretary: String?,
+    val chiefJudge: String?,
     val stage: Stage,
     val deleted: Boolean
 )

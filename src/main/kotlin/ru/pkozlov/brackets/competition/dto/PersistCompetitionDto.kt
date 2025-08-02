@@ -14,5 +14,7 @@ data class PersistCompetitionDto(
     val endDate: LocalDate,
     val address: String,
     val imagePath: String,
-    val categories: CategoriesByGender
+    val categories: CategoriesByGender,
+    val chiefSecretary: String,
+    val chiefJudge: String
 )

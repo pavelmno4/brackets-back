@@ -13,5 +13,7 @@ fun Competition.asDto(): CompetitionDto =
         imagePath = imagePath,
         categories = categories,
         stage = stage,
+        chiefSecretary = chiefSecretary,
+        chiefJudge = chiefJudge,
         deleted = deleted
     )

@@ -26,6 +26,8 @@ class CompetitionService(
             address = competition.address
             imagePath = competition.imagePath
             categories = competition.categories
+            chiefSecretary = competition.chiefSecretary
+            chiefJudge = competition.chiefJudge
             stage = REGISTRATION
             deleted = false
             createdAt = now()
@@ -41,6 +43,8 @@ class CompetitionService(
             competition.address = updatedCompetition.address
             competition.imagePath = updatedCompetition.imagePath
             competition.categories = updatedCompetition.categories
+            competition.chiefSecretary = competition.chiefSecretary
+            competition.chiefJudge = competition.chiefJudge
             competition.updatedAt = now()
         }?.asDto()
     }

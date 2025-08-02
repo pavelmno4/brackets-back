@@ -22,6 +22,8 @@ object CompetitionTable : UUIDTable("competition") {
     val address: Column<String> = varchar("address", 255)
     val imagePath: Column<String> = varchar("image_path", 255)
     val categories: Column<CategoriesByGender> = jsonb("categories", json)
+    val chiefSecretary: Column<String?> = varchar("chief_secretary", 255).nullable()
+    val chiefJudge: Column<String?> = varchar("chief_judge", 255).nullable()
     val stage: Column<Stage> = enumerationByName<Stage>("stage", 30)
     val deleted: Column<Boolean> = bool("deleted")
     val createdAt: Column<LocalDateTime> = datetime("created_at")
@@ -37,6 +39,8 @@ class Competition(id: EntityID<UUID>) : UUIDEntity(id) {
     var address: String by CompetitionTable.address
     var imagePath: String by CompetitionTable.imagePath
     var categories: CategoriesByGender by CompetitionTable.categories
+    var chiefSecretary: String? by CompetitionTable.chiefSecretary
+    var chiefJudge: String? by CompetitionTable.chiefJudge
     var stage: Stage by CompetitionTable.stage
     var deleted: Boolean by CompetitionTable.deleted
     var createdAt: LocalDateTime by CompetitionTable.createdAt

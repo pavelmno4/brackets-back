@@ -25,7 +25,7 @@ class ParticipantService(
                 gender = participant.gender
                 ageCategory = participant.ageCategory
                 weightCategory = participant.weightCategory
-                rank = participant.rank
+                rank = participant.rank.ifBlank { "б/р" }
                 settlement = participant.settlement
                 coachFullName = participant.coachFullName
                 team = newOrExistingTeam

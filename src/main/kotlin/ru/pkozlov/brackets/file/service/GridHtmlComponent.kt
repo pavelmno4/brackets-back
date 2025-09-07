@@ -52,6 +52,10 @@ object GridHtmlComponent {
                         text-align: left;
                         font-size: 14px;
                     }
+                    
+                    .circle-grid-info {
+                        text-align: center;
+                    }
             
                     .third-place-title {
                         text-align: center;
@@ -107,6 +111,9 @@ object GridHtmlComponent {
                     +" кг"
                 }
             }
+
+            // Additional info
+            if (grid.dendrogram.size == 3) div(classes = "circle-grid-info") { +"Круговая система" }
 
             // Main bracket
             for (dendrogram in grid.dendrogram) {

@@ -25,7 +25,7 @@ class FileService(
     ) = suspendTransaction {
         competitionService.findById(competitionId)?.let { competition ->
             gridService.findBy(competition.id, gender, ageCategory, weightCategory).let { grids ->
-                FileOutputStream("${outputConfig.path}/${competition.title}_${competition.startDate}.zip")
+                FileOutputStream("${outputConfig.path}/${competition.startDate}_${competition.id}.zip")
                     .run(::ZipOutputStream)
                     .use { zipOutput ->
                         grids.forEach { grid ->

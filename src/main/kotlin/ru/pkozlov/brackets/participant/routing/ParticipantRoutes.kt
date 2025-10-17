@@ -10,6 +10,9 @@ import org.koin.ktor.ext.inject
 import ru.pkozlov.brackets.app.dto.AgeCategory
 import ru.pkozlov.brackets.app.dto.WeightCategory
 import ru.pkozlov.brackets.app.enumeration.Gender
+import ru.pkozlov.brackets.auth.enumeration.Role.EDITOR
+import ru.pkozlov.brackets.auth.service.UserService
+import ru.pkozlov.brackets.auth.utils.hasRoles
 import ru.pkozlov.brackets.competition.service.CompetitionService
 import ru.pkozlov.brackets.participant.dto.CreateParticipantDto
 import ru.pkozlov.brackets.participant.dto.ParticipantDto
@@ -21,6 +24,7 @@ import java.util.*
 fun Application.participantRoutes() {
     val competitionService: CompetitionService by inject()
     val participantService: ParticipantService by inject()
+    val userService: UserService by inject()
 
     routing {
         route("/competitions/{competitionId}/participants") {
@@ -68,6 +72,8 @@ fun Application.participantRoutes() {
             authenticate("auth-session") {
                 patch("/{id}") {
                     try {
+                        hasRoles(setOf(EDITOR), userService)
+
                         val competitionId: UUID = call.parameters["competitionId"]
                             ?.run(UUID::fromString)
                             ?: run { call.respond(HttpStatusCode.BadRequest); return@patch }
@@ -95,6 +101,8 @@ fun Application.participantRoutes() {
             authenticate("auth-session") {
                 delete("/{id}") {
                     try {
+                        hasRoles(setOf(EDITOR), userService)
+
                         val competitionId: UUID = call.parameters["competitionId"]
                             ?.run(UUID::fromString)
                             ?: run { call.respond(HttpStatusCode.BadRequest); return@delete }

@@ -9,17 +9,23 @@ import org.koin.ktor.ext.inject
 import ru.pkozlov.brackets.app.dto.AgeCategory
 import ru.pkozlov.brackets.app.dto.WeightCategory
 import ru.pkozlov.brackets.app.enumeration.Gender
+import ru.pkozlov.brackets.auth.enumeration.Role.EDITOR
+import ru.pkozlov.brackets.auth.service.UserService
+import ru.pkozlov.brackets.auth.utils.hasRoles
 import ru.pkozlov.brackets.file.service.FileService
 import java.util.*
 
 fun Application.fileRoutes() {
     val fileService: FileService by inject()
+    val userService: UserService by inject()
 
     routing {
         route("/competitions/{competitionId}/files") {
 
             authenticate("auth-session") {
                 get("/grids") {
+                    hasRoles(setOf(EDITOR), userService)
+
                     val competitionId = call.parameters["competitionId"]?.run(UUID::fromString)
                         ?: throw IllegalStateException("Param 'competitionId' is required")
                     val gender = call.request.queryParameters["gender"]?.run(Gender::valueOf)

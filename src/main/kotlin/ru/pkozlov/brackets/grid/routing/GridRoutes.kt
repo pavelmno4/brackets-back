@@ -10,6 +10,9 @@ import org.koin.ktor.ext.inject
 import ru.pkozlov.brackets.app.dto.AgeCategory
 import ru.pkozlov.brackets.app.dto.WeightCategory
 import ru.pkozlov.brackets.app.enumeration.Gender
+import ru.pkozlov.brackets.auth.enumeration.Role.EDITOR
+import ru.pkozlov.brackets.auth.service.UserService
+import ru.pkozlov.brackets.auth.utils.hasRoles
 import ru.pkozlov.brackets.grid.dto.GenerateGridDto
 import ru.pkozlov.brackets.grid.dto.PatchGridMedalistsDto
 import ru.pkozlov.brackets.grid.dto.PatchGridSwapNodesDto
@@ -20,6 +23,7 @@ import java.util.*
 
 fun Application.gridRoutes() {
     val gridService: GridService by inject()
+    val userService: UserService by inject()
 
     routing {
         route("/competitions/{competitionId}/grids") {
@@ -49,6 +53,8 @@ fun Application.gridRoutes() {
 
             authenticate("auth-session") {
                 post {
+                    hasRoles(setOf(EDITOR), userService)
+
                     val competitionId: UUID = call.parameters["competitionId"]
                         ?.run(UUID::fromString)
                         ?: run { call.respond(HttpStatusCode.BadRequest); return@post }
@@ -60,6 +66,8 @@ fun Application.gridRoutes() {
 
             authenticate("auth-session") {
                 post("/single") {
+                    hasRoles(setOf(EDITOR), userService)
+
                     val competitionId: UUID = call.parameters["competitionId"]
                         ?.run(UUID::fromString)
                         ?: run { call.respond(HttpStatusCode.BadRequest); return@post }
@@ -80,6 +88,8 @@ fun Application.gridRoutes() {
 
             authenticate("auth-session") {
                 patch("/{gridId}/medalists") {
+                    hasRoles(setOf(EDITOR), userService)
+
                     val gridId: UUID = call.parameters["gridId"]
                         ?.run(UUID::fromString)
                         ?: run { call.respond(HttpStatusCode.BadRequest); return@patch }
@@ -94,6 +104,8 @@ fun Application.gridRoutes() {
 
             authenticate("auth-session") {
                 patch("/{gridId}/nodes/swap") {
+                    hasRoles(setOf(EDITOR), userService)
+
                     val gridId: UUID = call.parameters["gridId"]
                         ?.run(UUID::fromString)
                         ?: run { call.respond(HttpStatusCode.BadRequest); return@patch }
@@ -108,6 +120,8 @@ fun Application.gridRoutes() {
 
             authenticate("auth-session") {
                 patch("/{gridId}/nodes/{nodeId}/winner") {
+                    hasRoles(setOf(EDITOR), userService)
+
                     val gridId: UUID = call.parameters["gridId"]
                         ?.run(UUID::fromString)
                         ?: run { call.respond(HttpStatusCode.BadRequest); return@patch }
@@ -126,6 +140,8 @@ fun Application.gridRoutes() {
 
             authenticate("auth-session") {
                 patch("/{gridId}/nodes/{nodeId}/participant") {
+                    hasRoles(setOf(EDITOR), userService)
+
                     call.respond(HttpStatusCode.OK)
                 }
             }

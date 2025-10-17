@@ -7,6 +7,9 @@ import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import org.koin.ktor.ext.inject
+import ru.pkozlov.brackets.auth.enumeration.Role.VIEWER
+import ru.pkozlov.brackets.auth.service.UserService
+import ru.pkozlov.brackets.auth.utils.hasRoles
 import ru.pkozlov.brackets.competition.service.CompetitionService
 import ru.pkozlov.brackets.viewer.dto.CreateViewerDto
 import ru.pkozlov.brackets.viewer.service.ViewerService
@@ -15,6 +18,7 @@ import java.util.*
 fun Application.viewerRoutes() {
     val competitionService: CompetitionService by inject()
     val viewerService: ViewerService by inject()
+    val userService: UserService by inject()
 
     routing {
         route("/competitions/{competitionId}/viewers") {
@@ -36,6 +40,8 @@ fun Application.viewerRoutes() {
             authenticate("auth-session") {
                 get {
                     try {
+                        hasRoles(setOf(VIEWER), userService)
+
                         val competitionId: UUID = call.parameters["competitionId"]
                             ?.run(UUID::fromString)
                             ?: run { call.respond(HttpStatusCode.BadRequest); return@get }

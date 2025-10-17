@@ -7,12 +7,16 @@ import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import org.koin.ktor.ext.inject
+import ru.pkozlov.brackets.auth.enumeration.Role.EDITOR
+import ru.pkozlov.brackets.auth.service.UserService
+import ru.pkozlov.brackets.auth.utils.hasRoles
 import ru.pkozlov.brackets.competition.dto.PersistCompetitionDto
 import ru.pkozlov.brackets.competition.service.CompetitionService
 import java.util.*
 
 fun Application.competitionRoutes() {
     val competitionService: CompetitionService by inject()
+    val userService: UserService by inject()
 
     routing {
         route("/competitions") {
@@ -40,6 +44,8 @@ fun Application.competitionRoutes() {
 
             authenticate("auth-session") {
                 post {
+                    hasRoles(setOf(EDITOR), userService)
+
                     val competition: PersistCompetitionDto = call.receive<PersistCompetitionDto>()
 
                     competitionService.create(competition)
@@ -50,6 +56,8 @@ fun Application.competitionRoutes() {
             authenticate("auth-session") {
                 put("/{id}") {
                     try {
+                        hasRoles(setOf(EDITOR), userService)
+
                         val id: UUID = call.parameters["id"]?.run(UUID::fromString) ?: throw IllegalStateException()
                         val competition: PersistCompetitionDto = call.receive<PersistCompetitionDto>()
 
@@ -66,6 +74,8 @@ fun Application.competitionRoutes() {
             authenticate("auth-session") {
                 post("/{id}/start") {
                     try {
+                        hasRoles(setOf(EDITOR), userService)
+
                         val id: UUID = call.parameters["id"]?.run(UUID::fromString) ?: throw IllegalStateException()
 
                         competitionService.startCompetition(id)
@@ -81,6 +91,8 @@ fun Application.competitionRoutes() {
             authenticate("auth-session") {
                 post("/{id}/complete") {
                     try {
+                        hasRoles(setOf(EDITOR), userService)
+
                         val id: UUID = call.parameters["id"]?.run(UUID::fromString) ?: throw IllegalStateException()
 
                         competitionService.completeCompetition(id)

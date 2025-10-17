@@ -12,6 +12,7 @@ import ru.pkozlov.brackets.competition.domain.CompetitionTable
 import ru.pkozlov.brackets.grid.domain.GridTable
 import ru.pkozlov.brackets.participant.domain.ParticipantTable
 import ru.pkozlov.brackets.participant.domain.TeamTable
+import ru.pkozlov.brackets.viewer.domain.ViewerTable
 
 fun Application.configureDatabaseMigration() {
     val config: DatabaseConfig by inject<DatabaseConfig>()
@@ -26,6 +27,7 @@ fun Application.configureDatabaseMigration() {
         SchemaUtils.statementsRequiredToActualizeScheme(
             CompetitionTable,
             ParticipantTable,
+            ViewerTable,
             TeamTable,
             UserTable,
             GridTable

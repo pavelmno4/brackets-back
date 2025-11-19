@@ -10,6 +10,7 @@ import org.koin.ktor.ext.inject
 import ru.pkozlov.brackets.app.dto.AgeCategory
 import ru.pkozlov.brackets.app.dto.WeightCategory
 import ru.pkozlov.brackets.app.enumeration.Gender
+import ru.pkozlov.brackets.competition.service.CompetitionService
 import ru.pkozlov.brackets.grid.dto.GenerateGridDto
 import ru.pkozlov.brackets.grid.dto.PatchGridMedalistsDto
 import ru.pkozlov.brackets.grid.dto.PatchGridSwapNodesDto
@@ -19,6 +20,7 @@ import ru.pkozlov.brackets.grid.service.GridService
 import java.util.*
 
 fun Application.gridRoutes() {
+    val competitionService: CompetitionService by inject()
     val gridService: GridService by inject()
 
     routing {
@@ -53,6 +55,7 @@ fun Application.gridRoutes() {
                         ?.run(UUID::fromString)
                         ?: run { call.respond(HttpStatusCode.BadRequest); return@post }
 
+                    competitionService.buildCompetitionGrids(competitionId)
                     gridService.generateAutomatically(competitionId)
                         .let { grids -> call.respond(grids) }
                 }

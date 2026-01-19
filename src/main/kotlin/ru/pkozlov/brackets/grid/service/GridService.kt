@@ -41,6 +41,24 @@ class GridService(
         generate(competitionId, categories)
     }
 
+    suspend fun patchGridsVisibility(
+        competitionId: UUID,
+        gender: Gender,
+        ageCategory: AgeCategory,
+        weightCategory: WeightCategory?,
+        show: Boolean
+    ): List<GridDto> = suspendTransaction {
+        gridRepository
+            .findBy(
+                competitionId = competitionId,
+                gender = gender,
+                ageCategory = ageCategory,
+                weightCategory = weightCategory
+            )
+            .onEach { grid -> grid.show = show }
+            .map(Grid::asDto)
+    }
+
     suspend fun setWinnerForNode(gridId: UUID, nodeId: UUID, winnerNodeId: UUID): GridDto? = suspendTransaction {
         gridRepository.update(gridId) { grid ->
             val updatedDendrogram = grid.dendrogram.map { root ->
@@ -135,6 +153,7 @@ class GridService(
                             this.ageCategory = ageCategory
                             this.weightCategory = weightCategory
                             this.dendrogram = DendrogramComponent.createAndFill(participants)
+                            this.show = false
                         }.asDto()
                     }.also { logger.info("$gender $ageCategory $weightCategory grid created") }
                 }

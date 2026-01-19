@@ -26,5 +26,6 @@ data class GridDto(
     @Serializable(UUIDSerializer::class)
     val secondPlaceParticipantId: UUID?,
     @Serializable(UUIDSerializer::class)
-    val thirdPlaceParticipantId: UUID?
+    val thirdPlaceParticipantId: UUID?,
+    val show: Boolean
 )

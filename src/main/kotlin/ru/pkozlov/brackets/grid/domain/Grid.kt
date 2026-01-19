@@ -49,6 +49,7 @@ object GridTable : UUIDTable("grid") {
             fkName = "grid_third_place_participant_id_fk"
         )
         .nullable()
+    val show: Column<Boolean> = bool("show")
 }
 
 class Grid(id: EntityID<UUID>) : UUIDEntity(id) {
@@ -62,4 +63,5 @@ class Grid(id: EntityID<UUID>) : UUIDEntity(id) {
     var firstPlaceParticipantId: UUID? by GridTable.firstPlaceParticipantId
     var secondPlaceParticipantId: UUID? by GridTable.secondPlaceParticipantId
     var thirdPlaceParticipantId: UUID? by GridTable.thirdPlaceParticipantId
+    var show: Boolean by GridTable.show
 }

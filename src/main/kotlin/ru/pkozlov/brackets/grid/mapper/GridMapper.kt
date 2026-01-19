@@ -13,7 +13,8 @@ fun Grid.asDto(): GridDto = GridDto(
     competitionId = competitionId,
     firstPlaceParticipantId = firstPlaceParticipantId,
     secondPlaceParticipantId = secondPlaceParticipantId,
-    thirdPlaceParticipantId = thirdPlaceParticipantId
+    thirdPlaceParticipantId = thirdPlaceParticipantId,
+    show = show
 )
 
 fun GridDto.asView(): GridView = GridView(
@@ -22,7 +23,8 @@ fun GridDto.asView(): GridView = GridView(
     edges = dendrogram.flatMap { it.asEdgeList() },
     firstPlaceParticipantId = firstPlaceParticipantId,
     secondPlaceParticipantId = secondPlaceParticipantId,
-    thirdPlaceParticipantId = thirdPlaceParticipantId
+    thirdPlaceParticipantId = thirdPlaceParticipantId,
+    show = show
 )
 
 private fun Node.asNodesList(): List<NodeView> =

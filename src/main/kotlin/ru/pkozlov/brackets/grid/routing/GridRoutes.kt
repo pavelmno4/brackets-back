@@ -11,10 +11,7 @@ import ru.pkozlov.brackets.app.dto.AgeCategory
 import ru.pkozlov.brackets.app.dto.WeightCategory
 import ru.pkozlov.brackets.app.enumeration.Gender
 import ru.pkozlov.brackets.competition.service.CompetitionService
-import ru.pkozlov.brackets.grid.dto.GenerateGridsDto
-import ru.pkozlov.brackets.grid.dto.PatchGridMedalistsDto
-import ru.pkozlov.brackets.grid.dto.PatchGridSwapNodesDto
-import ru.pkozlov.brackets.grid.dto.PatchNodeWinnerDto
+import ru.pkozlov.brackets.grid.dto.*
 import ru.pkozlov.brackets.grid.mapper.asView
 import ru.pkozlov.brackets.grid.service.GridService
 import ru.pkozlov.brackets.participant.dto.criteria.AgeCategoryCriteria
@@ -93,6 +90,26 @@ fun Application.gridRoutes() {
                         .firstOrNull()
                         ?.let { grid -> call.respond(grid) }
                         ?: call.respond(HttpStatusCode.NoContent)
+                }
+            }
+
+            authenticate("auth-session") {
+                patch("/visibility") {
+                    val competitionId: UUID = call.parameters["competitionId"]
+                        ?.run(UUID::fromString)
+                        ?: run { call.respond(HttpStatusCode.BadRequest); return@patch }
+
+                    val patchGridsVisibilityDto: PatchGridsVisibility = call.receive<PatchGridsVisibility>()
+
+                    gridService
+                        .patchGridsVisibility(
+                            competitionId = competitionId,
+                            gender = patchGridsVisibilityDto.gender,
+                            ageCategory = patchGridsVisibilityDto.ageCategory,
+                            weightCategory = patchGridsVisibilityDto.weightCategory,
+                            show = patchGridsVisibilityDto.show
+                        )
+                        .let { grids -> call.respond(grids) }
                 }
             }
 

@@ -8,10 +8,10 @@ import ru.pkozlov.brackets.app.utils.serializer.AgeCategorySerializer
 import ru.pkozlov.brackets.app.utils.serializer.WeightCategorySerializer
 
 @Serializable
-data class GenerateGridDto(
+data class GenerateGridsDto(
     val gender: Gender,
     @Serializable(AgeCategorySerializer::class)
     val ageCategory: AgeCategory,
     @Serializable(WeightCategorySerializer::class)
-    val weightCategory: WeightCategory
+    val weightCategory: WeightCategory? = null
 )

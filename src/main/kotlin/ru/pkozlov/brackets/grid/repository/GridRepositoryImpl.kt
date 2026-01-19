@@ -7,6 +7,10 @@ import ru.pkozlov.brackets.app.dto.WeightCategory
 import ru.pkozlov.brackets.app.enumeration.Gender
 import ru.pkozlov.brackets.grid.domain.Grid
 import ru.pkozlov.brackets.grid.domain.GridTable
+import ru.pkozlov.brackets.participant.dto.criteria.AgeCategoryCriteria
+import ru.pkozlov.brackets.participant.dto.criteria.Criteria
+import ru.pkozlov.brackets.participant.dto.criteria.GenderCriteria
+import ru.pkozlov.brackets.participant.dto.criteria.WeightCategoryCriteria
 import java.util.*
 
 class GridRepositoryImpl : GridRepository {
@@ -37,21 +41,18 @@ class GridRepositoryImpl : GridRepository {
     ): Grid? =
         Grid.findByIdAndUpdate(id, action)
 
-    override suspend fun deleteByGenderAgeAndWeightCategory(
+    override suspend fun deleteByCriteria(
         competitionId: UUID,
-        gender: Gender,
-        ageCategory: AgeCategory,
-        weightCategory: WeightCategory
+        criteria: Collection<Criteria<*>>,
     ): Int =
         GridTable.deleteWhere {
-            GridTable.competitionId eq competitionId and
-                    (GridTable.gender eq gender) and
-                    (GridTable.ageCategory eq ageCategory) and
-                    (GridTable.weightCategory eq weightCategory)
+            criteria.fold(GridTable.competitionId eq competitionId) { condition, criteriaElement ->
+                when (criteriaElement) {
+                    is GenderCriteria -> condition and (GridTable.gender eq criteriaElement.value)
+                    is AgeCategoryCriteria -> condition and (GridTable.ageCategory eq criteriaElement.value)
+                    is WeightCategoryCriteria -> condition and (GridTable.weightCategory eq criteriaElement.value)
+                    else -> condition
+                }
+            }
         }
-
-    override suspend fun deleteAllWith(
-        competitionId: UUID
-    ): Int =
-        GridTable.deleteWhere { GridTable.competitionId eq competitionId }
 }

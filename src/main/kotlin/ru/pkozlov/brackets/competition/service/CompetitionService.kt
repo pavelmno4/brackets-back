@@ -54,16 +54,6 @@ class CompetitionService(
         }?.asDto()
     }
 
-    suspend fun buildCompetitionGrids(id: UUID): CompetitionDto? =
-        suspendTransaction {
-            competitionRepository.update(id) { competition ->
-                competition.stage = BUILDING_GRIDS
-                competition.updatedAt = now()
-            }?.asDto()
-        }?.also {
-            participantService.deleteAllWhereWeightIsNull(id)
-        }
-
     suspend fun startCompetition(id: UUID): CompetitionDto? =
         suspendTransaction {
             competitionRepository.update(id) { competition ->

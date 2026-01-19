@@ -13,9 +13,7 @@ import ru.pkozlov.brackets.grid.dto.*
 import ru.pkozlov.brackets.grid.mapper.asDto
 import ru.pkozlov.brackets.grid.repository.GridRepository
 import ru.pkozlov.brackets.participant.dto.ParticipantDto
-import ru.pkozlov.brackets.participant.dto.criteria.AgeCategoryCriteria
-import ru.pkozlov.brackets.participant.dto.criteria.GenderCriteria
-import ru.pkozlov.brackets.participant.dto.criteria.WeightCategoryCriteria
+import ru.pkozlov.brackets.participant.dto.criteria.Criteria
 import ru.pkozlov.brackets.participant.service.ParticipantService
 import java.util.*
 
@@ -25,39 +23,22 @@ class GridService(
 ) {
     private val logger: Logger = LoggerFactory.getLogger(GridService::class.java)
 
-    suspend fun generateAutomatically(competitionId: UUID): List<GridDto> = suspendTransaction {
-        val categories: Map<Pair<AgeCategory, WeightCategory>, List<ParticipantDto>> =
-            participantService
-                .findAllByCriteria(competitionId, setOf(GenderCriteria(Gender.MALE)))
-                .filter { participant -> participant.weight != null }
-                .groupBy { it.ageCategory to it.weightCategory }
-        gridRepository.deleteAllWith(competitionId)
-
-        generate(competitionId, Gender.MALE, categories)
-    }
-
-    suspend fun generateForSingleCategory(
+    suspend fun generateByCriteria(
         competitionId: UUID,
-        gender: Gender,
-        ageCategory: AgeCategory,
-        weightCategory: WeightCategory
-    ): GridDto? = suspendTransaction {
-        val category: Map<Pair<AgeCategory, WeightCategory>, List<ParticipantDto>> =
+        criteria: Set<Criteria<*>>
+    ): List<GridDto> = suspendTransaction {
+        val categories: Map<Triple<Gender, AgeCategory, WeightCategory>, List<ParticipantDto>> =
             participantService
                 .findAllByCriteria(
                     competitionId = competitionId,
-                    criteria = listOf(
-                        GenderCriteria(gender),
-                        AgeCategoryCriteria(ageCategory),
-                        WeightCategoryCriteria(weightCategory)
-                    )
+                    criteria = criteria
                 )
                 .filter { participant -> participant.weight != null }
-                .let { participants -> mapOf(Pair(ageCategory, weightCategory) to participants) }
+                .groupBy { Triple(it.gender, it.ageCategory, it.weightCategory) }
 
-        gridRepository.deleteByGenderAgeAndWeightCategory(competitionId, gender, ageCategory, weightCategory)
+        gridRepository.deleteByCriteria(competitionId, criteria)
 
-        generate(competitionId, gender, category).firstOrNull()
+        generate(competitionId, categories)
     }
 
     suspend fun setWinnerForNode(gridId: UUID, nodeId: UUID, winnerNodeId: UUID): GridDto? = suspendTransaction {
@@ -138,15 +119,14 @@ class GridService(
 
     private suspend fun generate(
         competitionId: UUID,
-        gender: Gender,
-        categories: Map<Pair<AgeCategory, WeightCategory>, List<ParticipantDto>>
+        categories: Map<Triple<Gender, AgeCategory, WeightCategory>, List<ParticipantDto>>
     ): List<GridDto> = suspendTransaction {
         val generationScope = CoroutineScope(Dispatchers.Default + SupervisorJob())
 
         val grids: List<GridDto> = categories
             .map { (category, participants) ->
                 generationScope.async {
-                    val (ageCategory, weightCategory) = category
+                    val (gender, ageCategory, weightCategory) = category
 
                     suspendTransaction {
                         gridRepository.create {

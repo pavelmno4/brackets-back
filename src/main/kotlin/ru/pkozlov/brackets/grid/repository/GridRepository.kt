@@ -4,6 +4,7 @@ import ru.pkozlov.brackets.app.dto.AgeCategory
 import ru.pkozlov.brackets.app.dto.WeightCategory
 import ru.pkozlov.brackets.app.enumeration.Gender
 import ru.pkozlov.brackets.grid.domain.Grid
+import ru.pkozlov.brackets.participant.dto.criteria.Criteria
 import java.util.*
 
 interface GridRepository {
@@ -18,12 +19,8 @@ interface GridRepository {
 
     suspend fun update(id: UUID, action: (it: Grid) -> Unit): Grid?
 
-    suspend fun deleteAllWith(competitionId: UUID): Int
-
-    suspend fun deleteByGenderAgeAndWeightCategory(
+    suspend fun deleteByCriteria(
         competitionId: UUID,
-        gender: Gender,
-        ageCategory: AgeCategory,
-        weightCategory: WeightCategory
+        criteria: Collection<Criteria<*>>,
     ): Int
 }

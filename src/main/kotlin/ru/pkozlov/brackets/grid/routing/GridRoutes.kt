@@ -11,12 +11,15 @@ import ru.pkozlov.brackets.app.dto.AgeCategory
 import ru.pkozlov.brackets.app.dto.WeightCategory
 import ru.pkozlov.brackets.app.enumeration.Gender
 import ru.pkozlov.brackets.competition.service.CompetitionService
-import ru.pkozlov.brackets.grid.dto.GenerateGridDto
+import ru.pkozlov.brackets.grid.dto.GenerateGridsDto
 import ru.pkozlov.brackets.grid.dto.PatchGridMedalistsDto
 import ru.pkozlov.brackets.grid.dto.PatchGridSwapNodesDto
 import ru.pkozlov.brackets.grid.dto.PatchNodeWinnerDto
 import ru.pkozlov.brackets.grid.mapper.asView
 import ru.pkozlov.brackets.grid.service.GridService
+import ru.pkozlov.brackets.participant.dto.criteria.AgeCategoryCriteria
+import ru.pkozlov.brackets.participant.dto.criteria.GenderCriteria
+import ru.pkozlov.brackets.participant.dto.criteria.WeightCategoryCriteria
 import java.util.*
 
 fun Application.gridRoutes() {
@@ -55,8 +58,17 @@ fun Application.gridRoutes() {
                         ?.run(UUID::fromString)
                         ?: run { call.respond(HttpStatusCode.BadRequest); return@post }
 
-                    competitionService.buildCompetitionGrids(competitionId)
-                    gridService.generateAutomatically(competitionId)
+                    val generateGridsDto: GenerateGridsDto = call.receive<GenerateGridsDto>()
+
+                    gridService
+                        .generateByCriteria(
+                            competitionId = competitionId,
+                            criteria = setOfNotNull(
+                                GenderCriteria(generateGridsDto.gender),
+                                AgeCategoryCriteria(generateGridsDto.ageCategory),
+                                generateGridsDto.weightCategory?.run(::WeightCategoryCriteria)
+                            )
+                        )
                         .let { grids -> call.respond(grids) }
                 }
             }
@@ -67,15 +79,18 @@ fun Application.gridRoutes() {
                         ?.run(UUID::fromString)
                         ?: run { call.respond(HttpStatusCode.BadRequest); return@post }
 
-                    val generateGridDto: GenerateGridDto = call.receive<GenerateGridDto>()
+                    val generateGridsDto: GenerateGridsDto = call.receive<GenerateGridsDto>()
 
                     gridService
-                        .generateForSingleCategory(
+                        .generateByCriteria(
                             competitionId = competitionId,
-                            gender = generateGridDto.gender,
-                            ageCategory = generateGridDto.ageCategory,
-                            weightCategory = generateGridDto.weightCategory
+                            criteria = setOfNotNull(
+                                GenderCriteria(generateGridsDto.gender),
+                                AgeCategoryCriteria(generateGridsDto.ageCategory),
+                                generateGridsDto.weightCategory?.run(::WeightCategoryCriteria)
+                            )
                         )
+                        .firstOrNull()
                         ?.let { grid -> call.respond(grid) }
                         ?: call.respond(HttpStatusCode.NoContent)
                 }

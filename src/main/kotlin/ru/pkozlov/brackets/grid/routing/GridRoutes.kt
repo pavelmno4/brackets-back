@@ -10,7 +10,6 @@ import org.koin.ktor.ext.inject
 import ru.pkozlov.brackets.app.dto.AgeCategory
 import ru.pkozlov.brackets.app.dto.WeightCategory
 import ru.pkozlov.brackets.app.enumeration.Gender
-import ru.pkozlov.brackets.competition.service.CompetitionService
 import ru.pkozlov.brackets.grid.dto.*
 import ru.pkozlov.brackets.grid.mapper.asView
 import ru.pkozlov.brackets.grid.service.GridService
@@ -20,7 +19,6 @@ import ru.pkozlov.brackets.participant.dto.criteria.WeightCategoryCriteria
 import java.util.*
 
 fun Application.gridRoutes() {
-    val competitionService: CompetitionService by inject()
     val gridService: GridService by inject()
 
     routing {
@@ -32,16 +30,14 @@ fun Application.gridRoutes() {
                         ?: throw IllegalStateException("Param 'competitionId' is required")
 
                     val gender = call.request.queryParameters["gender"]?.run(Gender::valueOf)
-                        ?: throw IllegalStateException("Param 'gender' is required")
-
                     val ageCategory = call.request.queryParameters["ageCategory"]?.run(::AgeCategory)
-                        ?: throw IllegalStateException("Param 'ageCategory' is required")
-
                     val weightCategory = call.request.queryParameters["weightCategory"]?.run(::WeightCategory)
-                        ?: throw IllegalStateException("Param 'weightCategory' is required")
 
-                    gridService.findBy(competitionId, gender, ageCategory, weightCategory).firstOrNull()
-                        ?.let { grid -> call.respond(grid.asView()) }
+                    gridService
+                        .findBy(competitionId, gender, ageCategory, weightCategory)
+                        .takeIf { it.isNotEmpty() }
+                        ?.map(GridDto::asView)
+                        ?.let { grids -> call.respond(grids) }
                         ?: call.respond(HttpStatusCode.NoContent)
 
                 } catch (exc: IllegalArgumentException) {
@@ -66,6 +62,7 @@ fun Application.gridRoutes() {
                                 generateGridsDto.weightCategory?.run(::WeightCategoryCriteria)
                             )
                         )
+                        .map(GridDto::asView)
                         .let { grids -> call.respond(grids) }
                 }
             }
@@ -88,7 +85,7 @@ fun Application.gridRoutes() {
                             )
                         )
                         .firstOrNull()
-                        ?.let { grid -> call.respond(grid) }
+                        ?.let { grid -> call.respond(grid.asView()) }
                         ?: call.respond(HttpStatusCode.NoContent)
                 }
             }
@@ -109,6 +106,7 @@ fun Application.gridRoutes() {
                             weightCategory = patchGridsVisibilityDto.weightCategory,
                             show = patchGridsVisibilityDto.show
                         )
+                        .map(GridDto::asView)
                         .let { grids -> call.respond(grids) }
                 }
             }
@@ -122,7 +120,7 @@ fun Application.gridRoutes() {
                     val patchMedalistsDto: PatchGridMedalistsDto = call.receive<PatchGridMedalistsDto>()
 
                     gridService.patchMedalists(gridId, patchMedalistsDto)
-                        ?.let { updatedGrid -> call.respond(updatedGrid) }
+                        ?.let { updatedGrid -> call.respond(updatedGrid.asView()) }
                         ?: call.respond(HttpStatusCode.NoContent)
                 }
             }
@@ -136,7 +134,7 @@ fun Application.gridRoutes() {
                     val swapNodesDto: PatchGridSwapNodesDto = call.receive<PatchGridSwapNodesDto>()
 
                     gridService.swapNodes(gridId, swapNodesDto)
-                        ?.let { updatedGrid -> call.respond(updatedGrid) }
+                        ?.let { updatedGrid -> call.respond(updatedGrid.asView()) }
                         ?: call.respond(HttpStatusCode.NoContent)
                 }
             }
@@ -154,7 +152,7 @@ fun Application.gridRoutes() {
                     val winnerNodeId: UUID = call.receive<PatchNodeWinnerDto>().winnerNodeId
 
                     gridService.setWinnerForNode(gridId, nodeId, winnerNodeId)
-                        ?.let { updatedGrid -> call.respond(updatedGrid) }
+                        ?.let { updatedGrid -> call.respond(updatedGrid.asView()) }
                         ?: call.respond(HttpStatusCode.NoContent)
                 }
             }

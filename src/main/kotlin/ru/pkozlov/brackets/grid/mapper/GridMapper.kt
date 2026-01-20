@@ -19,6 +19,9 @@ fun Grid.asDto(): GridDto = GridDto(
 
 fun GridDto.asView(): GridView = GridView(
     id = id,
+    gender = gender,
+    ageCategory = ageCategory,
+    weightCategory = weightCategory,
     nodes = dendrogram.flatMap { it.asNodesList() },
     edges = dendrogram.flatMap { it.asEdgeList() },
     firstPlaceParticipantId = firstPlaceParticipantId,

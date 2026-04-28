@@ -66,4 +66,9 @@ class ParticipantService(
                 .sortedBy { participant -> participant.lastName }
                 .map(Participant::asDto)
         }
+
+    suspend fun deleteAllByCriteriaAndWeightNull(competitionId: UUID, criteria: Collection<Criteria<*>>): Int =
+        suspendTransaction {
+            participantRepository.deleteAllByCriteriaAndWeightNull(competitionId, criteria)
+        }
 }

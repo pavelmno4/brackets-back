@@ -27,6 +27,7 @@ class GridService(
         competitionId: UUID,
         criteria: Set<Criteria<*>>
     ): List<GridDto> = suspendTransaction {
+        participantService.deleteAllByCriteriaAndWeightNull(competitionId, criteria)
         val categories: Map<Triple<Gender, AgeCategory, WeightCategory>, List<ParticipantDto>> =
             participantService
                 .findAllByCriteria(

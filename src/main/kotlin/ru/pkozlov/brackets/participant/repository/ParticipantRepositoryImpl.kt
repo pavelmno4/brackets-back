@@ -2,10 +2,8 @@ package ru.pkozlov.brackets.participant.repository
 
 import org.jetbrains.exposed.dao.load
 import org.jetbrains.exposed.dao.with
-import org.jetbrains.exposed.sql.Query
-import org.jetbrains.exposed.sql.andWhere
-import org.jetbrains.exposed.sql.innerJoin
-import org.jetbrains.exposed.sql.selectAll
+import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.inSubQuery
 import ru.pkozlov.brackets.participant.domain.Participant
 import ru.pkozlov.brackets.participant.domain.ParticipantTable
 import ru.pkozlov.brackets.participant.domain.TeamTable
@@ -54,4 +52,24 @@ class ParticipantRepositoryImpl : ParticipantRepository {
 
     override suspend fun delete(id: UUID): Unit? =
         Participant.findById(id)?.delete()
+
+    override suspend fun deleteAllByCriteriaAndWeightNull(competitionId: UUID, criteria: Collection<Criteria<*>>): Int {
+        val idsQuery: Query = ParticipantTable.select(ParticipantTable.id).apply {
+            andWhere { ParticipantTable.competitionId eq competitionId }
+
+            criteria.forEach { criteria ->
+                when (criteria) {
+                    is GenderCriteria -> andWhere { ParticipantTable.gender eq criteria.value }
+                    is AgeCategoryCriteria -> andWhere { ParticipantTable.ageCategory eq criteria.value }
+                    is WeightCategoryCriteria -> andWhere { ParticipantTable.weightCategory eq criteria.value }
+                    is TeamCriteria -> adjustColumnSet { innerJoin(TeamTable, { ParticipantTable.teamId }, { TeamTable.id }) }
+                        .adjustSelect { select(fields + TeamTable.columns) }
+                        .andWhere { TeamTable.name eq criteria.value }
+                }
+            }
+            andWhere { ParticipantTable.weight eq null }
+        }
+
+        return ParticipantTable.deleteWhere { ParticipantTable.id inSubQuery idsQuery }
+    }
 }
